@@ -28,4 +28,7 @@
     <string name="question_restore">클라우드 데이터를 복원하시겠습니까?</string>
     <string name="authorizing">작업중...</string>
     <string name="all">전체</string>
+    <string name="mix">혼합</string>
+    <string name="sequence">순차</string>
+    <string name="random">랜덤</string>
 </resources>

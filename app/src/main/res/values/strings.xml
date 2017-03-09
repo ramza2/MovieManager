@@ -28,4 +28,7 @@
     <string name="question_restore">Are you sure you want to restore your cloud data?</string>
     <string name="authorizing">Authorizing...</string>
     <string name="all">ALL</string>
+    <string name="mix">MIX</string>
+    <string name="sequence">SEQUENCE</string>
+    <string name="random">RANDOM</string>
 </resources>

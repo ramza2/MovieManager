@@ -59,7 +59,7 @@ public class MovieRecommandActivity extends AppCompatActivity implements MovieRe
 
         categorySpinner.setAdapter(categorySpinnerAdapter);
 
-        String[] searchType = {"혼합","순차", "랜덤"};
+        String[] searchType = {getString(R.string.mix),getString(R.string.sequence), getString(R.string.random)};
         searchTypeSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, searchType));
 
         RxView.clicks(recommandBtn)
