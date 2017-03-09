@@ -4,7 +4,7 @@
     <string name="category_list">Category 목록</string>
     <string name="movie_list">Movie 목록</string>
     <string name="reommand_log">추천 로그</string>
-    <string name="batch_regist">일괄 등록</string>
+    <string name="backup_and_restore">백업 및 복원</string>
     <string name="add_category">+ 카테고리 등록</string>
     <string name="delete">삭제</string>
     <string name="add_movie">+ 동영상 등록</string>
