@@ -62,7 +62,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         holder.movieNameTextView.setText(movie.getName());
         Category category = movie.getCategory();
         holder.categorNameTextView.setText(category != null ? category.getName() : null);
-        holder.haveSeenTextView.setText(movie.isHaveSeen() ? "봄" : "안봄");
+        holder.haveSeenTextView.setText(movie.isHaveSeen() ?
+                holder.itemView.getContext().getString(R.string.have_seen) : holder.itemView.getContext().getString(R.string.not_have_seen) );
         holder.starNumTextView.setText(String.valueOf(movie.getStarNum()));
     }
 

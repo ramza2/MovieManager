@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements
 
         asyncDialog = new ProgressDialog(this);
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        asyncDialog.setMessage(getString(R.string.working));
+        asyncDialog.setMessage(getString(R.string.authorizing));
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         // [START_EXCLUDE silent]
-        showStatus(getString(R.string.working));
+        showStatus(getString(R.string.authorizing));
         showProgressDialog();
         // [END_EXCLUDE]
 
