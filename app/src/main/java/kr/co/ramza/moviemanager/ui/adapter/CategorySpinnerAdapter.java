@@ -28,9 +28,9 @@ public class CategorySpinnerAdapter extends BaseAdapter{
         categories = new ArrayList<>(repositoryInteractor.getAllCategorys());
     }
 
-    public void addTotalData(){
+    public void addTotalData(String all){
         Category category = new Category();
-        category.setName("전체");
+        category.setName(all);
         category.setId(0);
         categories.add(0, category);
     }

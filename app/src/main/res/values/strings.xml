@@ -27,4 +27,5 @@
     <string name="restore">Restore</string>
     <string name="question_restore">Are you sure you want to restore your cloud data?</string>
     <string name="authorizing">Authorizing...</string>
+    <string name="all">ALL</string>
 </resources>

@@ -86,7 +86,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListVie
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(movieListAdapter);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
-        categorySpinnerAdapter.addTotalData();
+        categorySpinnerAdapter.addTotalData(getString(R.string.all));
         categorySpinner.setAdapter(categorySpinnerAdapter);
         RxAdapterView.selectionEvents(categorySpinner)
                 .subscribe(event->movieListPresenter.loadMovieList());
@@ -94,7 +94,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListVie
         RxTextView.textChangeEvents(movieNameEditText)
                 .subscribe(event->movieListPresenter.loadMovieList());
 
-        String[] haeSeens = {"전체", "안봄", "봄"};
+        String[] haeSeens = {getString(R.string.all), getString(R.string.not_have_seen), getString(R.string.have_seen)};
         haveSeenSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, haeSeens));
         RxAdapterView.selectionEvents(haveSeenSpinner)
                 .subscribe(event->movieListPresenter.loadMovieList());
