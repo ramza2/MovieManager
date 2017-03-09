@@ -53,7 +53,7 @@ public class BatchRegistActivity extends AppCompatActivity implements BatchRegis
 
         asyncDialog = new ProgressDialog(this);
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        asyncDialog.setMessage("작업중");
+        asyncDialog.setMessage(getString(R.string.working));
 
         RxView.clicks(clearDataBtn)
                 .flatMap(x->dialog(this, R.string.init, R.string.question_init))
