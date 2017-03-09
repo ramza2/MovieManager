@@ -12,8 +12,8 @@ import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.model.interactor.FirebaseInteractor;
 import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
-import kr.co.ramza.moviemanager.presenter.BatchRegistPresenter;
-import kr.co.ramza.moviemanager.ui.view.BatchRegistView;
+import kr.co.ramza.moviemanager.presenter.MainPresenter;
+import kr.co.ramza.moviemanager.ui.view.MainView;
 import kr.co.ramza.moviemanager.variable.Conts;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -27,22 +27,22 @@ import static rx.Observable.combineLatest;
  * ramza@activednc.com
  */
 
-public class BatchRegistPresenterImpl implements BatchRegistPresenter {
+public class MainPresenterImpl implements MainPresenter {
 
-    private BatchRegistView batchRegistView;
+    private MainView mainView;
 
     private RepositoryInteractor repositoryInteractor;
     private FirebaseInteractor firebaseInteractor;
 
     @Inject
-    public BatchRegistPresenterImpl(RepositoryInteractor repositoryInteractor, FirebaseInteractor firebaseInteractor) {
+    public MainPresenterImpl(RepositoryInteractor repositoryInteractor, FirebaseInteractor firebaseInteractor) {
         this.repositoryInteractor = repositoryInteractor;
         this.firebaseInteractor = firebaseInteractor;
     }
 
     @Override
-    public void setView(BatchRegistView batchRegistView) {
-        this.batchRegistView = batchRegistView;
+    public void setView(MainView mainView) {
+        this.mainView = mainView;
     }
 
     @Override
@@ -57,11 +57,11 @@ public class BatchRegistPresenterImpl implements BatchRegistPresenter {
         Observable<Boolean> fileObservable = Observable.defer(()->{
             boolean saveSuccess = false;
             try {
-                File categoryFile = batchRegistView.getFile(Conts.CATEGORY_FILE_NAME);
+                File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
                 repositoryInteractor.backup(repositoryInteractor.getAllCategorys(), categoryFile);
-                File movieFile = batchRegistView.getFile(Conts.MOVIE_FILE_NAME);
+                File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
                 repositoryInteractor.backup(repositoryInteractor.getAllMovies(), movieFile);
-                File logFile = batchRegistView.getFile(Conts.LOG_FILE_NAME);
+                File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
                 repositoryInteractor.backup(repositoryInteractor.getAllLogs(), logFile);
                 saveSuccess = true;
             } catch (Exception e) {
@@ -73,38 +73,38 @@ public class BatchRegistPresenterImpl implements BatchRegistPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnCompleted(() -> {
-                    batchRegistView.showStatus("파일 저장 완료");
+                    mainView.showStatus("파일 저장 완료");
                 });
 
-        File categoryFile = batchRegistView.getFile(Conts.CATEGORY_FILE_NAME);
+        File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> categoryObservable = firebaseInteractor.backup(Conts.CATEGORY_FILE_NAME, categoryFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    batchRegistView.showStatus("Category 클라우드 저장 완료");
+                    mainView.showStatus("Category 클라우드 저장 완료");
                 });
-        File movieFile = batchRegistView.getFile(Conts.MOVIE_FILE_NAME);
+        File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> movieObservable = firebaseInteractor.backup(Conts.MOVIE_FILE_NAME, movieFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    batchRegistView.showStatus("Movie 클라우드 저장 완료");
+                    mainView.showStatus("Movie 클라우드 저장 완료");
                 });
-        File logFile = batchRegistView.getFile(Conts.LOG_FILE_NAME);
+        File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> logObservable = firebaseInteractor.backup(Conts.LOG_FILE_NAME, logFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    batchRegistView.showStatus("Log 클라우드 저장 완료");
+                    mainView.showStatus("Log 클라우드 저장 완료");
                 });
 
         Observable cloudObservable = Observable.combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
 
         fileObservable.flatMap(success -> cloudObservable)
                 .doOnSubscribe(()->{
-                    batchRegistView.showStatus("백업 시작");
-                    batchRegistView.showProgressDialog();
+                    mainView.showStatus("백업 시작");
+                    mainView.showProgressDialog();
                 })
                 .doOnNext((o) -> {
-                    batchRegistView.showStatus("백업 완료");
-                    batchRegistView.dismissProgressDialog();
+                    mainView.showStatus("백업 완료");
+                    mainView.dismissProgressDialog();
                 })
                 .subscribe();
     }
@@ -114,11 +114,11 @@ public class BatchRegistPresenterImpl implements BatchRegistPresenter {
         Observable<Boolean> fileObservable = Observable.defer(()->{
             boolean loadSuccess = false;
             try {
-                File categoryFile = batchRegistView.getFile(Conts.CATEGORY_FILE_NAME);
+                File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
                 if(categoryFile.exists()) repositoryInteractor.restore(categoryFile, Category.class);
-                File movieFile = batchRegistView.getFile(Conts.MOVIE_FILE_NAME);
+                File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
                 if(movieFile.exists()) repositoryInteractor.restore(movieFile, Movie.class);
-                File logFile = batchRegistView.getFile(Conts.LOG_FILE_NAME);
+                File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
                 if(logFile.exists()) repositoryInteractor.restore(logFile, Log.class);
                 loadSuccess = true;
             } catch (Exception e) {
@@ -129,36 +129,36 @@ public class BatchRegistPresenterImpl implements BatchRegistPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        File categoryFile = batchRegistView.getFile(Conts.CATEGORY_FILE_NAME);
+        File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
         Observable<FileDownloadTask.TaskSnapshot> categoryObservable = firebaseInteractor.restore(Conts.CATEGORY_FILE_NAME, categoryFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    batchRegistView.showStatus("Category 클라우드 파일 복원 완료");
+                    mainView.showStatus("Category 클라우드 파일 복원 완료");
                 });
 
-        File movieFile = batchRegistView.getFile(Conts.MOVIE_FILE_NAME);
+        File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
         Observable<FileDownloadTask.TaskSnapshot> movieObservable = firebaseInteractor.restore(Conts.MOVIE_FILE_NAME, movieFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    batchRegistView.showStatus("Movie 클라우드 파일 복원 완료");
+                    mainView.showStatus("Movie 클라우드 파일 복원 완료");
                 });
-        File logFile = batchRegistView.getFile(Conts.LOG_FILE_NAME);
+        File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
         Observable<FileDownloadTask.TaskSnapshot> logObservable = firebaseInteractor.restore(Conts.LOG_FILE_NAME, logFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    batchRegistView.showStatus("Log 클라우드 파일 복원 완료");
+                    mainView.showStatus("Log 클라우드 파일 복원 완료");
                 });
 
         Observable cloudObservable = combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
 
         cloudObservable.flatMap(o -> fileObservable)
                 .doOnSubscribe(()->{
-                    batchRegistView.showStatus("복원 시작");
-                    batchRegistView.showProgressDialog();
+                    mainView.showStatus("복원 시작");
+                    mainView.showProgressDialog();
                 })
                 .doOnNext((o) -> {
-                    batchRegistView.showStatus("복원 완료");
-                    batchRegistView.dismissProgressDialog();
+                    mainView.showStatus("복원 완료");
+                    mainView.dismissProgressDialog();
                 })
                 .subscribe();
     }

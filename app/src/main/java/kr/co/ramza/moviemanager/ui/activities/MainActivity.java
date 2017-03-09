@@ -1,9 +1,11 @@
 package kr.co.ramza.moviemanager.ui.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -27,22 +29,31 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.jakewharton.rxbinding.view.RxView;
+
+import java.io.File;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.presenter.impl.MainPresenterImpl;
+import kr.co.ramza.moviemanager.ui.view.MainView;
+import rx.Observable;
+import rx.Subscriber;
+import rx.subscriptions.Subscriptions;
 
 public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener, MainView {
 
     private GoogleApiClient googleApiClient;
 
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authListener;
 
-    @BindView(R.id.batchRegistBtn)
-    Button batchRegistBtn;
     @BindView(R.id.goolgeSignInBtn)
     SignInButton signInButton;
     @BindView(R.id.signOutBtn)
@@ -54,16 +65,34 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.sign_out_and_disconnect)
     LinearLayout sign_out_and_disconnect;
 
-    private ProgressDialog progressDialog;
+    @BindView(R.id.cloudLayout)
+    LinearLayout cloudLayout;
+    @BindView(R.id.backupBtn)
+    Button backupBtn;
+    @BindView(R.id.restoreBtn)
+    Button restoreBtn;
+    @BindView(R.id.clearDataBtn)
+    Button clearDataBtn;
 
     private static final int RC_SIGN_IN = 9001;
+
+    @Inject
+    MainPresenterImpl mainPresenter;
+
+    ProgressDialog asyncDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
+        ((MovieManagerApplication) getApplicationContext()).getApplicationComponent().inject(this);
+
+        mainPresenter.setView(this);
+
+        asyncDialog = new ProgressDialog(this);
+        asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        asyncDialog.setMessage(getString(R.string.working));
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -88,6 +117,45 @@ public class MainActivity extends AppCompatActivity implements
         };
 
         signInButton.setSize(SignInButton.SIZE_STANDARD);
+
+        RxView.clicks(clearDataBtn)
+                .flatMap(x->dialog(this, R.string.init, R.string.question_init))
+                .filter(x-> x == true)
+                .subscribe(event->mainPresenter.clearData());
+
+        RxView.clicks(backupBtn)
+                .flatMap(x->dialog(this, R.string.backup, R.string.question_backup))
+                .filter(x-> x == true)
+                .subscribe(event -> {
+                    mainPresenter.backup();
+                });
+
+        RxView.clicks(restoreBtn)
+                .flatMap(x->dialog(this, R.string.restore, R.string.question_restore))
+                .filter(x-> x == true)
+                .subscribe(event->{
+                    mainPresenter.restore();
+                });
+    }
+
+    Observable<Boolean> dialog(Context context, int title, int message) {
+        return Observable.create((Subscriber<? super Boolean> subscriber) -> {
+            final AlertDialog ad = new AlertDialog.Builder(context)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        subscriber.onNext(true);
+                        subscriber.onCompleted();
+                    })
+                    .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
+                        subscriber.onNext(false);
+                        subscriber.onCompleted();
+                    })
+                    .create();
+            // cleaning up
+            subscriber.add(Subscriptions.create(ad::dismiss));
+            ad.show();
+        });
     }
 
     @Override
@@ -106,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @OnClick({R.id.recommandBtn, R.id.categoryListBtn, R.id.movieListBtn, R.id.logListBtn, R.id.batchRegistBtn, R.id.goolgeSignInBtn, R.id.signOutBtn, R.id.disconnectBtn})
+    @OnClick({R.id.recommandBtn, R.id.categoryListBtn, R.id.movieListBtn, R.id.logListBtn, R.id.goolgeSignInBtn, R.id.signOutBtn, R.id.disconnectBtn})
     public void onClick(View view){
         int id = view.getId();
         switch (id) {
@@ -121,9 +189,6 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.logListBtn:
                 startActivity(LogActivity.getIntent(this));
-                break;
-            case R.id.batchRegistBtn:
-                startActivity(BatchRegistActivity.getIntent(this));
                 break;
             case R.id.goolgeSignInBtn:
                 signIn();
@@ -157,6 +222,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         // [START_EXCLUDE silent]
+        showStatus(getString(R.string.working));
         showProgressDialog();
         // [END_EXCLUDE]
 
@@ -174,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         }
                         // [START_EXCLUDE]
-                        hideProgressDialog();
+                        dismissProgressDialog();
                         // [END_EXCLUDE]
                     }
                 });
@@ -213,34 +279,38 @@ public class MainActivity extends AppCompatActivity implements
                 });
     }
 
-    private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage(getString(R.string.loading));
-            progressDialog.setIndeterminate(true);
-        }
-
-        progressDialog.show();
+    @Override
+    public File getFile(String fileName) {
+        return new File(getFilesDir(), fileName);
     }
 
-    private void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.hide();
-        }
+    @Override
+    public void showStatus(String status) {
+        asyncDialog.setMessage(status);
+    }
+
+    @Override
+    public void showProgressDialog() {
+        asyncDialog.show();
+    }
+
+    @Override
+    public void dismissProgressDialog() {
+        if(asyncDialog != null && asyncDialog.isShowing()) asyncDialog.dismiss();
     }
 
     private void updateUI(FirebaseUser user) {
-        hideProgressDialog();
+        dismissProgressDialog();
         if (user != null) {
             statusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
 
-            batchRegistBtn.setVisibility(View.VISIBLE);
+            cloudLayout.setVisibility(View.VISIBLE);
             signInButton.setVisibility(View.GONE);
             sign_out_and_disconnect.setVisibility(View.VISIBLE);
         } else {
             statusTextView.setText(R.string.signed_out);
 
-            batchRegistBtn.setVisibility(View.GONE);
+            cloudLayout.setVisibility(View.GONE);
             signInButton.setVisibility(View.VISIBLE);
             sign_out_and_disconnect.setVisibility(View.GONE);
         }

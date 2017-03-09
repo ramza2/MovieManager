@@ -6,9 +6,9 @@ import javax.inject.Singleton;
 
 import dagger.Component;
 import kr.co.ramza.moviemanager.di.module.RepositoryModule;
-import kr.co.ramza.moviemanager.ui.activities.BatchRegistActivity;
 import kr.co.ramza.moviemanager.ui.activities.CategoryListActivity;
 import kr.co.ramza.moviemanager.ui.activities.LogActivity;
+import kr.co.ramza.moviemanager.ui.activities.MainActivity;
 import kr.co.ramza.moviemanager.ui.activities.MovieDetailActivity;
 import kr.co.ramza.moviemanager.ui.activities.MovieListActivity;
 import kr.co.ramza.moviemanager.ui.activities.MovieRecommandActivity;
@@ -23,9 +23,9 @@ import kr.co.ramza.moviemanager.ui.activities.MovieRecommandActivity;
         modules = {RepositoryModule.class}
 )
 public interface ApplicationComponent {
+    void inject(@NonNull MainActivity mainActivity);
     void inject(@NonNull CategoryListActivity categoryListActivity);
     void inject(@NonNull MovieListActivity movieListActivity);
-    void inject(@NonNull BatchRegistActivity batchRegistActivity);
     void inject(@NonNull MovieDetailActivity movieDetailActivity);
     void inject(@NonNull MovieRecommandActivity movieRecommandActivity);
     void inject(@NonNull LogActivity logActivity);

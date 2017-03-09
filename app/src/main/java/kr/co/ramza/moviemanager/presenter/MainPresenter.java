@@ -1,6 +1,6 @@
 package kr.co.ramza.moviemanager.presenter;
 
-import kr.co.ramza.moviemanager.ui.view.BatchRegistView;
+import kr.co.ramza.moviemanager.ui.view.MainView;
 
 /**
  * Created by 전창현 on 2017-03-02.
@@ -8,8 +8,8 @@ import kr.co.ramza.moviemanager.ui.view.BatchRegistView;
  * ramza@activednc.com
  */
 
-public interface BatchRegistPresenter {
-    void setView(BatchRegistView batchRegistView);
+public interface MainPresenter {
+    void setView(MainView mainView);
     void clearData();
     void backup();
     void restore();

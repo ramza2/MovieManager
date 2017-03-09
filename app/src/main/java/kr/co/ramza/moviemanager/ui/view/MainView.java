@@ -8,7 +8,7 @@ import java.io.File;
  * ramza@activednc.com
  */
 
-public interface BatchRegistView {
+public interface MainView {
     File getFile(String fileName);
     void showStatus(String status);
     void showProgressDialog();

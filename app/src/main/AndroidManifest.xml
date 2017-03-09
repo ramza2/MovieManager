@@ -24,7 +24,6 @@
         <activity
             android:name=".ui.activities.MovieListActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".ui.activities.BatchRegistActivity" />
         <activity
             android:name=".ui.activities.MovieDetailActivity"
             android:windowSoftInputMode="stateHidden" />
