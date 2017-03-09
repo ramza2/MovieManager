@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MyMovieList</string>
+    <string name="app_name">My Video List</string>
     <string name="recommand_movie">Movie Recommand</string>
     <string name="category_list">Category List</string>
     <string name="movie_list">Movie List</string>
