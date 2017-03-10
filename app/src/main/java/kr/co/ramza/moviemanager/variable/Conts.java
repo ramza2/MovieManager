@@ -8,7 +8,6 @@ package kr.co.ramza.moviemanager.variable;
 
 public class Conts {
 
-    public static final String MOVIE_MANAGER_DIR = "MovieManager";
     public static final String CATEGORY_FILE_NAME = "category.json";
     public static final String MOVIE_FILE_NAME = "movie.json";
     public static final String LOG_FILE_NAME = "log.json";
