@@ -62,7 +62,7 @@ public class MovieRecommandPresenterImpl implements MovieRecommandPresenter {
         }
 
         if(movie != null){
-            movieRecommandView.showRecommadMovie(movie);
+            movieRecommandView.showRecommandMovie(movie);
             Log newLog = new Log();
             newLog.setMovie(movie);
             newLog.setSearchType(currentSearchType);

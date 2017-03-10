@@ -9,5 +9,5 @@ import kr.co.ramza.moviemanager.model.Movie;
  */
 
 public interface MovieRecommandView {
-    void showRecommadMovie(Movie movie);
+    void showRecommandMovie(Movie movie);
 }

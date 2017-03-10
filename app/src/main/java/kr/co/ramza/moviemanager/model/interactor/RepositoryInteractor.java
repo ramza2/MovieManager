@@ -189,6 +189,7 @@ public class RepositoryInteractor {
         Realm realm = Realm.getDefaultInstance();
         Observable<Log>  logAddObservable = Observable.just(newLog)
                 .map(log->{
+                    log.setId(getNextKey(Log.class));
                     log.setLogDt(new Date());
                     return log;
                 })

@@ -74,7 +74,7 @@ public class MovieRecommandActivity extends AppCompatActivity implements MovieRe
     }
 
     @Override
-    public void showRecommadMovie(Movie movie) {
+    public void showRecommandMovie(Movie movie) {
         movieRecommandLayout.setTag(movie.getId());
         movieNameTextView.setText(movie.getName());
         Category category = movie.getCategory();
