@@ -2,6 +2,7 @@ package kr.co.ramza.moviemanager.presenter.impl;
 
 import javax.inject.Inject;
 
+import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
 import kr.co.ramza.moviemanager.presenter.CategoryListPresenter;
@@ -40,6 +41,6 @@ public class CategoryListPresenterImpl implements CategoryListPresenter {
         Category category = new Category();
         category.setName(categoryName.trim());
         Observable<Category> categoryObservable = repositoryInteractor.addCategory(category);
-        categoryObservable.subscribe(categoryResult ->loadCategoryList(), throwable -> this.categoryListView.showToast("카테고리 등록 실패"));
+        categoryObservable.subscribe(categoryResult ->loadCategoryList(), throwable -> this.categoryListView.showToast(R.string.failed_category_registration));
     }
 }

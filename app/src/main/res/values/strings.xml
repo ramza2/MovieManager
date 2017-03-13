@@ -43,4 +43,5 @@
     <string name="completed_log_cloud_file_restoration">Completed log cloud file restoration</string>
     <string name="start_restore">복원 시작</string>
     <string name="restoration_complete">Restoration complete</string>
+    <string name="failed_category_registration">Failed category registration</string>
 </resources>

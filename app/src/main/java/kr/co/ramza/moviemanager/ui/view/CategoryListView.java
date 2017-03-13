@@ -11,5 +11,5 @@ import kr.co.ramza.moviemanager.model.Category;
 
 public interface CategoryListView {
     void showList(RealmResults<Category> categoryRealmResults);
-    void showToast(String msg);
+    void showToast(int stringRes);
 }
