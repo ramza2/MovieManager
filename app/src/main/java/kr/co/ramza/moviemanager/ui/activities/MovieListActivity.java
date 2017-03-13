@@ -86,6 +86,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListVie
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(movieListAdapter);
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
+
         categorySpinnerAdapter.addTotalData(getString(R.string.all));
         categorySpinner.setAdapter(categorySpinnerAdapter);
         RxAdapterView.selectionEvents(categorySpinner)

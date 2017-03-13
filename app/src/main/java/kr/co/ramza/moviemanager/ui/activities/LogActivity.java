@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.widget.Button;
 
 import com.jakewharton.rxbinding.view.RxView;
@@ -21,6 +22,7 @@ import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.presenter.impl.LogPresenterImpl;
 import kr.co.ramza.moviemanager.ui.adapter.LogListAdapter;
+import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.LogView;
 
 public class LogActivity extends AppCompatActivity implements LogView{
@@ -28,6 +30,7 @@ public class LogActivity extends AppCompatActivity implements LogView{
     @Inject
     LogPresenterImpl logPresenter;
 
+    @Inject
     LogListAdapter logListAdapter;
 
     @BindView(R.id.recyclerView)
@@ -35,6 +38,8 @@ public class LogActivity extends AppCompatActivity implements LogView{
 
     @BindView(R.id.initLogBtn)
     Button initLogBtn;
+
+    private ItemTouchHelper itemTouchHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +59,18 @@ public class LogActivity extends AppCompatActivity implements LogView{
                 layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        logListAdapter = new LogListAdapter();
         recyclerView.setAdapter(logListAdapter);
-        logPresenter.loadLogs();
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(logListAdapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         RxView.clicks(initLogBtn)
                 .subscribe(event->{
                     logPresenter.clearLogs();
                     logListAdapter.notifyDataSetChanged();
                 });
+
+        logPresenter.loadLogs();
     }
 
     @Override

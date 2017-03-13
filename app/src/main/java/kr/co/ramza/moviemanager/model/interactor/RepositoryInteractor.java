@@ -228,6 +228,13 @@ public class RepositoryInteractor {
         return realm.where(Log.class).findAllSorted("logDt", Sort.DESCENDING);
     }
 
+    public void deleteLog(Log log){
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        log.deleteFromRealm();
+        realm.commitTransaction();
+    }
+
     public void clearLogs(){
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();

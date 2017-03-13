@@ -67,6 +67,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
                 .subscribe(event->{
                     movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString(),
                             (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
+                    finish();
                 });
 
         RxView.clicks(deleteBtn)
