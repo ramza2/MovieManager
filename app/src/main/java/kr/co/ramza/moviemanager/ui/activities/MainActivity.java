@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
-import kr.co.ramza.moviemanager.presenter.impl.MainPresenterImpl;
+import kr.co.ramza.moviemanager.presenter.MainPresenter;
 import kr.co.ramza.moviemanager.ui.view.MainView;
 import rx.Observable;
 import rx.Subscriber;
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     @Inject
-    MainPresenterImpl mainPresenter;
+    MainPresenter mainPresenter;
 
     ProgressDialog asyncDialog = null;
 

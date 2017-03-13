@@ -22,7 +22,7 @@ import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
-import kr.co.ramza.moviemanager.presenter.impl.CategoryListPresenterImpl;
+import kr.co.ramza.moviemanager.presenter.CategoryListPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategoryListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.CategoryListView;
@@ -39,7 +39,7 @@ public class CategoryListActivity extends AppCompatActivity implements CategoryL
     Button addCategoryBtn;
 
     @Inject
-    CategoryListPresenterImpl categoryListPresenter;
+    CategoryListPresenter categoryListPresenter;
 
     @Inject
     CategoryListAdapter categoryListAdapter;

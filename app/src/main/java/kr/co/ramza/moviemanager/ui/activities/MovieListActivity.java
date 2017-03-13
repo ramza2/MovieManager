@@ -27,7 +27,7 @@ import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.presenter.impl.MovieListPresenterImpl;
+import kr.co.ramza.moviemanager.presenter.MovieListPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.adapter.MovieListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
@@ -54,7 +54,7 @@ public class MovieListActivity extends AppCompatActivity implements MovieListVie
     TextView searchCountTextView;
 
     @Inject
-    MovieListPresenterImpl movieListPresenter;
+    MovieListPresenter movieListPresenter;
 
     @Inject
     MovieListAdapter movieListAdapter;

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import kr.co.ramza.moviemanager.di.module.PresenterModule;
 import kr.co.ramza.moviemanager.di.module.RepositoryModule;
 import kr.co.ramza.moviemanager.ui.activities.CategoryListActivity;
 import kr.co.ramza.moviemanager.ui.activities.LogActivity;
@@ -20,7 +21,7 @@ import kr.co.ramza.moviemanager.ui.activities.MovieRecommandActivity;
  */
 @Singleton
 @Component(
-        modules = {RepositoryModule.class}
+        modules = {RepositoryModule.class, PresenterModule.class}
 )
 public interface ApplicationComponent {
     void inject(@NonNull MainActivity mainActivity);

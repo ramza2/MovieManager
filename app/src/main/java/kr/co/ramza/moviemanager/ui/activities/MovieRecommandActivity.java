@@ -21,14 +21,14 @@ import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.presenter.impl.MovieRecommandPresenterImpl;
+import kr.co.ramza.moviemanager.presenter.MovieRecommandPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.view.MovieRecommandView;
 
 public class MovieRecommandActivity extends AppCompatActivity implements MovieRecommandView{
 
     @Inject
-    MovieRecommandPresenterImpl movieRecommandPresenter;
+    MovieRecommandPresenter movieRecommandPresenter;
 
     @BindView(R.id.categorySpinner)
     Spinner categorySpinner;

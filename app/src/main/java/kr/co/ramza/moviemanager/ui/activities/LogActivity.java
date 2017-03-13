@@ -20,7 +20,7 @@ import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Log;
-import kr.co.ramza.moviemanager.presenter.impl.LogPresenterImpl;
+import kr.co.ramza.moviemanager.presenter.LogPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.LogListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.LogView;
@@ -28,7 +28,7 @@ import kr.co.ramza.moviemanager.ui.view.LogView;
 public class LogActivity extends AppCompatActivity implements LogView{
 
     @Inject
-    LogPresenterImpl logPresenter;
+    LogPresenter logPresenter;
 
     @Inject
     LogListAdapter logListAdapter;

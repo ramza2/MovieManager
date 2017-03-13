@@ -22,7 +22,7 @@ import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.presenter.impl.MovieDetailPresenterImpl;
+import kr.co.ramza.moviemanager.presenter.MovieDetailPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.view.MovieDetailView;
 
@@ -31,7 +31,7 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     public static final String EXTRA_ID = "id";
 
     @Inject
-    MovieDetailPresenterImpl movieDetailPresenter;
+    MovieDetailPresenter movieDetailPresenter;
 
     @BindView(R.id.categorySpinner)
     Spinner categorySpinner;
