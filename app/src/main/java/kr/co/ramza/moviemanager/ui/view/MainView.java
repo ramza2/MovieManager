@@ -10,7 +10,7 @@ import java.io.File;
 
 public interface MainView {
     File getFile(String fileName);
-    void showStatus(String status);
+    void showStatus(int stingRes);
     void showProgressDialog();
     void dismissProgressDialog();
 }

@@ -31,4 +31,16 @@
     <string name="mix">MIX</string>
     <string name="sequence">SEQUENCE</string>
     <string name="random">RANDOM</string>
+    <string name="complete_file_save">File saved successfully</string>
+    <string name="category_saved_to_cloud">Category saved to cloud</string>
+    <string name="video_saved_to_cloud">Video saved to cloud</string>
+    <string name="log_saved_to_cloud">Log saved to cloud</string>
+    <string name="start_backup">Start backup</string>
+    <string name="backup_complete">Backup complete</string>
+    <string name="backup_failed">Backup failed</string>
+    <string name="completed_category_cloud_file_restoration">Completed category cloud file restoration</string>
+    <string name="completed_video_cloud_file_restoration">Completed video cloud file restoration</string>
+    <string name="completed_log_cloud_file_restoration">Completed log cloud file restoration</string>
+    <string name="start_restore">복원 시작</string>
+    <string name="restoration_complete">Restoration complete</string>
 </resources>

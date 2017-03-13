@@ -7,6 +7,7 @@ import java.io.File;
 
 import javax.inject.Inject;
 
+import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
@@ -73,37 +74,41 @@ public class MainPresenterImpl implements MainPresenter {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnCompleted(() -> {
-                    mainView.showStatus("파일 저장 완료");
+                    mainView.showStatus(R.string.complete_file_save);
                 });
 
         File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> categoryObservable = firebaseInteractor.backup(Conts.CATEGORY_FILE_NAME, categoryFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    mainView.showStatus("Category 클라우드 저장 완료");
+                    mainView.showStatus(R.string.category_saved_to_cloud);
                 });
         File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> movieObservable = firebaseInteractor.backup(Conts.MOVIE_FILE_NAME, movieFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    mainView.showStatus("Movie 클라우드 저장 완료");
+                    mainView.showStatus(R.string.video_saved_to_cloud);
                 });
         File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> logObservable = firebaseInteractor.backup(Conts.LOG_FILE_NAME, logFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    mainView.showStatus("Log 클라우드 저장 완료");
+                    mainView.showStatus(R.string.log_saved_to_cloud);
                 });
 
         Observable cloudObservable = Observable.combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
 
         fileObservable.flatMap(success -> cloudObservable)
                 .doOnSubscribe(()->{
-                    mainView.showStatus("백업 시작");
+                    mainView.showStatus(R.string.start_backup);
                     mainView.showProgressDialog();
                 })
                 .doOnNext((o) -> {
-                    mainView.showStatus("백업 완료");
+                    mainView.showStatus(R.string.backup_complete);
+                    mainView.dismissProgressDialog();
+                })
+                .doOnError(throwable -> {
+                    mainView.showStatus(R.string.backup_failed);
                     mainView.dismissProgressDialog();
                 })
                 .subscribe();
@@ -133,31 +138,31 @@ public class MainPresenterImpl implements MainPresenter {
         Observable<FileDownloadTask.TaskSnapshot> categoryObservable = firebaseInteractor.restore(Conts.CATEGORY_FILE_NAME, categoryFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    mainView.showStatus("Category 클라우드 파일 복원 완료");
+                    mainView.showStatus(R.string.completed_category_cloud_file_restoration);
                 });
 
         File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
         Observable<FileDownloadTask.TaskSnapshot> movieObservable = firebaseInteractor.restore(Conts.MOVIE_FILE_NAME, movieFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    mainView.showStatus("Movie 클라우드 파일 복원 완료");
+                    mainView.showStatus(R.string.completed_video_cloud_file_restoration);
                 });
         File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
         Observable<FileDownloadTask.TaskSnapshot> logObservable = firebaseInteractor.restore(Conts.LOG_FILE_NAME, logFile)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> {
-                    mainView.showStatus("Log 클라우드 파일 복원 완료");
+                    mainView.showStatus(R.string.completed_log_cloud_file_restoration);
                 });
 
         Observable cloudObservable = combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
 
         cloudObservable.flatMap(o -> fileObservable)
                 .doOnSubscribe(()->{
-                    mainView.showStatus("복원 시작");
+                    mainView.showStatus(R.string.start_restore);
                     mainView.showProgressDialog();
                 })
                 .doOnNext((o) -> {
-                    mainView.showStatus("복원 완료");
+                    mainView.showStatus(R.string.restoration_complete);
                     mainView.dismissProgressDialog();
                 })
                 .subscribe();

@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         // [START_EXCLUDE silent]
-        showStatus(getString(R.string.authorizing));
+        showStatus(R.string.authorizing);
         showProgressDialog();
         // [END_EXCLUDE]
 
@@ -285,8 +285,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void showStatus(String status) {
-        asyncDialog.setMessage(status);
+    public void showStatus(int stingRes) {
+        asyncDialog.setMessage(getString(stingRes));
     }
 
     @Override
