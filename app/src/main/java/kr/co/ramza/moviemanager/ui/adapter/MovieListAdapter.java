@@ -15,7 +15,7 @@ import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.ui.activities.MovieDetailActivity;
 import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperAdapter;
 
@@ -28,11 +28,11 @@ import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperAdapter;
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private RealmResults<Movie> movieRealmResults;
 
-    private RepositoryInteractor repositoryInteractor;
+    private RealmInteractor realmInteractor;
 
     @Inject
-    public MovieListAdapter(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public MovieListAdapter(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     public void setMovieRealmResults(RealmResults<Movie> movieRealmResults) {
@@ -80,7 +80,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     @Override
     public void onItemDismiss(int position) {
         Movie movie = movieRealmResults.get(position);
-        repositoryInteractor.deleteMovie(movie);
+        realmInteractor.deleteMovie(movie);
         notifyItemRemoved(position);
     }
 

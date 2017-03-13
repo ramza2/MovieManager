@@ -33,9 +33,9 @@ import rx.Observable;
  * ACTIVE D&C
  * ramza@activednc.com
  */
-public class RepositoryInteractor {
+public class RealmInteractor {
 
-    public RepositoryInteractor(Context context) {
+    public RealmInteractor(Context context) {
         Realm.init(context);
     }
 

@@ -5,7 +5,7 @@ import javax.inject.Inject;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.MovieRecommandPresenter;
 import kr.co.ramza.moviemanager.ui.view.MovieRecommandView;
 import kr.co.ramza.moviemanager.variable.Conts;
@@ -17,13 +17,13 @@ import kr.co.ramza.moviemanager.variable.Conts;
  */
 
 public class MovieRecommandPresenterImpl implements MovieRecommandPresenter {
-    private RepositoryInteractor repositoryInteractor;
+    private RealmInteractor realmInteractor;
 
     private MovieRecommandView movieRecommandView;
 
     @Inject
-    public MovieRecommandPresenterImpl(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public MovieRecommandPresenterImpl(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     @Override
@@ -38,25 +38,25 @@ public class MovieRecommandPresenterImpl implements MovieRecommandPresenter {
         switch (searchType) {
             case Conts.SEARCH_TYPE_SEQUENCE:
                 currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
-                movie = repositoryInteractor.getFirstMovie(null, category.getId(), haveSeen);
+                movie = realmInteractor.getFirstMovie(null, category.getId(), haveSeen);
                 break;
             case Conts.SEARCH_TYPE_RANDOM:
                 currentSearchType = Conts.SEARCH_TYPE_RANDOM;
-                movie = repositoryInteractor.getRandomMovie(null, category.getId(), haveSeen);
+                movie = realmInteractor.getRandomMovie(null, category.getId(), haveSeen);
                 break;
             case Conts.SEARCH_TYPE_MIX:
-                Log lastLog = repositoryInteractor.getLastLog(category.getId());
+                Log lastLog = realmInteractor.getLastLog(category.getId());
                 if(lastLog != null){
                     if(lastLog.getSearchType() == Conts.SEARCH_TYPE_SEQUENCE){
                         currentSearchType = Conts.SEARCH_TYPE_RANDOM;
-                        movie = repositoryInteractor.getRandomMovie(null, category.getId(), haveSeen);
+                        movie = realmInteractor.getRandomMovie(null, category.getId(), haveSeen);
                     }else{
                         currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
-                        movie = repositoryInteractor.getFirstMovie(null, category.getId(), haveSeen);
+                        movie = realmInteractor.getFirstMovie(null, category.getId(), haveSeen);
                     }
                 }else{
                     currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
-                    movie = repositoryInteractor.getFirstMovie(null, category.getId(), haveSeen);
+                    movie = realmInteractor.getFirstMovie(null, category.getId(), haveSeen);
                 }
                 break;
         }
@@ -66,7 +66,7 @@ public class MovieRecommandPresenterImpl implements MovieRecommandPresenter {
             Log newLog = new Log();
             newLog.setMovie(movie);
             newLog.setSearchType(currentSearchType);
-            repositoryInteractor.addLog(newLog).subscribe();
+            realmInteractor.addLog(newLog).subscribe();
         }
     }
 }

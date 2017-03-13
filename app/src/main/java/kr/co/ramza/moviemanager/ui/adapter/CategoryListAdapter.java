@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperAdapter;
 import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperViewHolder;
 
@@ -29,11 +29,11 @@ import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperViewHolder;
 public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private RealmResults<Category> categoryRealmResults;
 
-    private RepositoryInteractor repositoryInteractor;
+    private RealmInteractor realmInteractor;
 
     @Inject
-    public CategoryListAdapter(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public CategoryListAdapter(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     public void setCategoryRealmResults(RealmResults<Category> categoryRealmResults) {
@@ -67,7 +67,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     @Override
     public void onItemDismiss(int position) {
         Category category = categoryRealmResults.get(position);
-        repositoryInteractor.deleteCategory(category);
+        realmInteractor.deleteCategory(category);
         notifyItemRemoved(position);
     }
 
@@ -85,7 +85,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            repositoryInteractor.modifyCategoryName(category, s.toString());
+            realmInteractor.modifyCategoryName(category, s.toString());
         }
 
         @Override

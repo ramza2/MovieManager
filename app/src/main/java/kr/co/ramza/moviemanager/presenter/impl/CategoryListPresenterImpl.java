@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.CategoryListPresenter;
 import kr.co.ramza.moviemanager.ui.view.CategoryListView;
 import rx.Observable;
@@ -17,13 +17,13 @@ import rx.Observable;
 
 public class CategoryListPresenterImpl implements CategoryListPresenter {
 
-    private final RepositoryInteractor repositoryInteractor;
+    private final RealmInteractor realmInteractor;
 
     private CategoryListView categoryListView;
 
     @Inject
-    public CategoryListPresenterImpl(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public CategoryListPresenterImpl(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     @Override
@@ -33,14 +33,14 @@ public class CategoryListPresenterImpl implements CategoryListPresenter {
 
     @Override
     public void loadCategoryList() {
-        categoryListView.showList(repositoryInteractor.getAllCategorys());
+        categoryListView.showList(realmInteractor.getAllCategorys());
     }
 
     @Override
     public void addCategory(String categoryName) {
         Category category = new Category();
         category.setName(categoryName.trim());
-        Observable<Category> categoryObservable = repositoryInteractor.addCategory(category);
+        Observable<Category> categoryObservable = realmInteractor.addCategory(category);
         categoryObservable.subscribe(categoryResult ->loadCategoryList(), throwable -> this.categoryListView.showToast(R.string.failed_category_registration));
     }
 }

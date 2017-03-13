@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.MovieDetailPresenter;
 import kr.co.ramza.moviemanager.ui.view.MovieDetailView;
 
@@ -15,15 +15,15 @@ import kr.co.ramza.moviemanager.ui.view.MovieDetailView;
  */
 
 public class MovieDetailPresenterImpl implements MovieDetailPresenter {
-    private RepositoryInteractor repositoryInteractor;
+    private RealmInteractor realmInteractor;
 
     private MovieDetailView movieDetailView;
 
     private Movie movie;
 
     @Inject
-    public MovieDetailPresenterImpl(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public MovieDetailPresenterImpl(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     @Override
@@ -33,17 +33,17 @@ public class MovieDetailPresenterImpl implements MovieDetailPresenter {
 
     @Override
     public void loadMovie(long id) {
-        this.movie = repositoryInteractor.getMovie(id);
+        this.movie = realmInteractor.getMovie(id);
         movieDetailView.showMovieInfo(movie);
     }
 
     @Override
     public void modifyMovie(String name, Category category, boolean haveSeen, float starNum) {
-        repositoryInteractor.modifyMovieInfo(this.movie, name, category, haveSeen, starNum);
+        realmInteractor.modifyMovieInfo(this.movie, name, category, haveSeen, starNum);
     }
 
     @Override
     public void deleteMovie() {
-        repositoryInteractor.deleteMovie(this.movie);
+        realmInteractor.deleteMovie(this.movie);
     }
 }

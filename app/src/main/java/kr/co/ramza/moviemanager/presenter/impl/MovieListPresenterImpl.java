@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.MovieListPresenter;
 import kr.co.ramza.moviemanager.ui.view.MovieListView;
 
@@ -16,13 +16,13 @@ import kr.co.ramza.moviemanager.ui.view.MovieListView;
 
 public class MovieListPresenterImpl implements MovieListPresenter {
 
-    private final RepositoryInteractor repositoryInteractor;
+    private final RealmInteractor realmInteractor;
 
     private MovieListView movieListView;
 
     @Inject
-    public MovieListPresenterImpl(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public MovieListPresenterImpl(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     @Override
@@ -35,7 +35,7 @@ public class MovieListPresenterImpl implements MovieListPresenter {
         String name = movieListView.getName();
         long categoryId = movieListView.getCategoryId();
         Boolean haveSeen = movieListView.getHaveSeen();
-        movieListView.showList(repositoryInteractor.getMovies(name, categoryId, haveSeen));
+        movieListView.showList(realmInteractor.getMovies(name, categoryId, haveSeen));
     }
 
     @Override
@@ -44,7 +44,7 @@ public class MovieListPresenterImpl implements MovieListPresenter {
             Movie newMovie = new Movie();
             newMovie.setName(name.trim());
             newMovie.setCategory(category);
-            repositoryInteractor.addMovie(newMovie).subscribe();
+            realmInteractor.addMovie(newMovie).subscribe();
         }
     }
 }

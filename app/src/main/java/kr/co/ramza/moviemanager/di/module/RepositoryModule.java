@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import kr.co.ramza.moviemanager.model.interactor.FirebaseInteractor;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 
 /**
  * Created by 전창현 on 2017-02-27.
@@ -25,8 +25,8 @@ public class RepositoryModule {
 
     @Singleton
     @Provides
-    public RepositoryInteractor provideRepositoryInteractor(){
-        return new RepositoryInteractor(context);
+    public RealmInteractor provideRealmInteractor(){
+        return new RealmInteractor(context);
     }
 
     @Singleton

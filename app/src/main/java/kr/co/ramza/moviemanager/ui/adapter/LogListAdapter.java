@@ -16,7 +16,7 @@ import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.ui.activities.MovieDetailActivity;
 import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperAdapter;
 
@@ -29,11 +29,11 @@ import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperAdapter;
 public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHolder> implements ItemTouchHelperAdapter {
     private RealmResults<Log> logRealmResults;
 
-    private RepositoryInteractor repositoryInteractor;
+    private RealmInteractor realmInteractor;
 
     @Inject
-    public LogListAdapter(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public LogListAdapter(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     public void setLogRealmResults(RealmResults<Log> logRealmResults) {
@@ -84,7 +84,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     @Override
     public void onItemDismiss(int position) {
         Log log = logRealmResults.get(position);
-        repositoryInteractor.deleteLog(log);
+        realmInteractor.deleteLog(log);
         notifyItemRemoved(position);
     }
 

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import kr.co.ramza.moviemanager.model.Category;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 
 /**
  * Created by 전창현 on 2017-03-02.
@@ -24,8 +24,8 @@ public class CategorySpinnerAdapter extends BaseAdapter{
     private ArrayList<Category> categories;
 
     @Inject
-    public CategorySpinnerAdapter(RepositoryInteractor repositoryInteractor) {
-        categories = new ArrayList<>(repositoryInteractor.getAllCategorys());
+    public CategorySpinnerAdapter(RealmInteractor realmInteractor) {
+        categories = new ArrayList<>(realmInteractor.getAllCategorys());
     }
 
     public void addTotalData(String all){

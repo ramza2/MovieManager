@@ -2,7 +2,7 @@ package kr.co.ramza.moviemanager.presenter.impl;
 
 import javax.inject.Inject;
 
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.LogPresenter;
 import kr.co.ramza.moviemanager.ui.view.LogView;
 
@@ -14,12 +14,12 @@ import kr.co.ramza.moviemanager.ui.view.LogView;
 
 public class LogPresenterImpl implements LogPresenter {
 
-    private RepositoryInteractor repositoryInteractor;
+    private RealmInteractor realmInteractor;
     private LogView logView;
 
     @Inject
-    public LogPresenterImpl(RepositoryInteractor repositoryInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public LogPresenterImpl(RealmInteractor realmInteractor) {
+        this.realmInteractor = realmInteractor;
     }
 
     @Override
@@ -29,11 +29,11 @@ public class LogPresenterImpl implements LogPresenter {
 
     @Override
     public void loadLogs() {
-        logView.showLogs(repositoryInteractor.getAllLogs());
+        logView.showLogs(realmInteractor.getAllLogs());
     }
 
     @Override
     public void clearLogs() {
-        repositoryInteractor.clearLogs();
+        realmInteractor.clearLogs();
     }
 }

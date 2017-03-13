@@ -12,7 +12,7 @@ import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.model.interactor.FirebaseInteractor;
-import kr.co.ramza.moviemanager.model.interactor.RepositoryInteractor;
+import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.MainPresenter;
 import kr.co.ramza.moviemanager.ui.view.MainView;
 import kr.co.ramza.moviemanager.variable.Conts;
@@ -32,12 +32,12 @@ public class MainPresenterImpl implements MainPresenter {
 
     private MainView mainView;
 
-    private RepositoryInteractor repositoryInteractor;
+    private RealmInteractor realmInteractor;
     private FirebaseInteractor firebaseInteractor;
 
     @Inject
-    public MainPresenterImpl(RepositoryInteractor repositoryInteractor, FirebaseInteractor firebaseInteractor) {
-        this.repositoryInteractor = repositoryInteractor;
+    public MainPresenterImpl(RealmInteractor realmInteractor, FirebaseInteractor firebaseInteractor) {
+        this.realmInteractor = realmInteractor;
         this.firebaseInteractor = firebaseInteractor;
     }
 
@@ -48,9 +48,9 @@ public class MainPresenterImpl implements MainPresenter {
 
     @Override
     public void clearData() {
-        repositoryInteractor.clearCategories();
-        repositoryInteractor.clearMovies();
-        repositoryInteractor.clearLogs();
+        realmInteractor.clearCategories();
+        realmInteractor.clearMovies();
+        realmInteractor.clearLogs();
     }
 
     @Override
@@ -59,11 +59,11 @@ public class MainPresenterImpl implements MainPresenter {
             boolean saveSuccess = false;
             try {
                 File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
-                repositoryInteractor.backup(repositoryInteractor.getAllCategorys(), categoryFile);
+                realmInteractor.backup(realmInteractor.getAllCategorys(), categoryFile);
                 File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
-                repositoryInteractor.backup(repositoryInteractor.getAllMovies(), movieFile);
+                realmInteractor.backup(realmInteractor.getAllMovies(), movieFile);
                 File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
-                repositoryInteractor.backup(repositoryInteractor.getAllLogs(), logFile);
+                realmInteractor.backup(realmInteractor.getAllLogs(), logFile);
                 saveSuccess = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -120,11 +120,11 @@ public class MainPresenterImpl implements MainPresenter {
             boolean loadSuccess = false;
             try {
                 File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
-                if(categoryFile.exists()) repositoryInteractor.restore(categoryFile, Category.class);
+                if(categoryFile.exists()) realmInteractor.restore(categoryFile, Category.class);
                 File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
-                if(movieFile.exists()) repositoryInteractor.restore(movieFile, Movie.class);
+                if(movieFile.exists()) realmInteractor.restore(movieFile, Movie.class);
                 File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
-                if(logFile.exists()) repositoryInteractor.restore(logFile, Log.class);
+                if(logFile.exists()) realmInteractor.restore(logFile, Log.class);
                 loadSuccess = true;
             } catch (Exception e) {
                 e.printStackTrace();
