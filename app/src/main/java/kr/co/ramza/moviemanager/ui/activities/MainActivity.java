@@ -24,7 +24,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
-import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerMainActivityComponent;
+import kr.co.ramza.moviemanager.di.component.MainActivityComponent;
 import kr.co.ramza.moviemanager.di.module.AuthModule;
 import kr.co.ramza.moviemanager.presenter.MainPresenter;
 import kr.co.ramza.moviemanager.ui.view.MainView;
@@ -68,7 +69,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     protected ActivityComponent getInitializeCompoent() {
-        return DaggerActivityComponent.builder()
+        return DaggerMainActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .authModule(new AuthModule(this))
                 .build();
@@ -77,7 +78,7 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     protected void onInject(@Nullable ActivityComponent component) {
         if (component != null) {
-            component.inject(this);
+            ((MainActivityComponent)component).inject(this);
         }
     }
 
