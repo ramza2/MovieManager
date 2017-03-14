@@ -1,5 +1,20 @@
 package kr.co.ramza.moviemanager.presenter.impl;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.UploadTask;
 
@@ -11,6 +26,7 @@ import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
+import kr.co.ramza.moviemanager.model.interactor.FirebaseAuthInteractor;
 import kr.co.ramza.moviemanager.model.interactor.FirebaseInteractor;
 import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.MainPresenter;
@@ -28,22 +44,110 @@ import static rx.Observable.combineLatest;
  * ramza@activednc.com
  */
 
-public class MainPresenterImpl implements MainPresenter {
+public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConnectionFailedListener {
 
     private MainView mainView;
 
     private RealmInteractor realmInteractor;
     private FirebaseInteractor firebaseInteractor;
+    private FirebaseAuthInteractor firebaseAuthInteractor;
+
+    private FirebaseAuth.AuthStateListener authListener;
 
     @Inject
-    public MainPresenterImpl(RealmInteractor realmInteractor, FirebaseInteractor firebaseInteractor) {
+    public MainPresenterImpl(RealmInteractor realmInteractor, FirebaseInteractor firebaseInteractor, FirebaseAuthInteractor firebaseAuthInteractor) {
         this.realmInteractor = realmInteractor;
         this.firebaseInteractor = firebaseInteractor;
+        this.firebaseAuthInteractor = firebaseAuthInteractor;
+
+        this.firebaseAuthInteractor.init(this);
+
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                // [START_EXCLUDE]
+                mainView.updateUI(user);
+                // [END_EXCLUDE]
+            }
+        };
     }
 
     @Override
     public void setView(MainView mainView) {
         this.mainView = mainView;
+    }
+
+    @Override
+    public void onStart() {
+        firebaseAuthInteractor.addAuthStateListener(authListener);
+    }
+
+    @Override
+    public void onStop() {
+        firebaseAuthInteractor.removeAuthStateListener(authListener);
+    }
+
+    @Override
+    public void signIn(int requestCode) {
+        firebaseAuthInteractor.signIn(requestCode);
+    }
+
+    @Override
+    public void signOut() {
+        firebaseAuthInteractor.signOut(new ResultCallback() {
+            @Override
+            public void onResult(@NonNull Result result) {
+                mainView.updateUI(null);
+            }
+        });
+    }
+
+    @Override
+    public void revokeAccess() {
+        firebaseAuthInteractor.revokeAccess(new ResultCallback() {
+            @Override
+            public void onResult(@NonNull Result result) {
+                mainView.updateUI(null);
+            }
+        });
+    }
+
+    @Override
+    public void processSignInResult(Intent data) {
+        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+        if (result.isSuccess()) {
+            GoogleSignInAccount account = result.getSignInAccount();
+            firebaseAuthWithGoogle(account);
+        } else {
+            // Google Sign In failed, update UI appropriately
+            // [START_EXCLUDE]
+            mainView.updateUI(null);
+            // [END_EXCLUDE]
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        // [START_EXCLUDE silent]
+        mainView.showStatus(R.string.authorizing);
+        mainView.showProgressDialog();
+        // [END_EXCLUDE]
+
+        firebaseAuthInteractor.signInWithCredential(acct, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                // If sign in fails, display a message to the user. If sign in succeeds
+                // the auth state listener will be notified and logic to handle the
+                // signed in user can be handled in the listener.
+                if (!task.isSuccessful()) {
+                    mainView.showToast(R.string.authentication_failed);
+                }
+                // [START_EXCLUDE]
+                mainView.dismissProgressDialog();
+                // [END_EXCLUDE]
+            }
+        });
     }
 
     @Override
@@ -166,5 +270,10 @@ public class MainPresenterImpl implements MainPresenter {
                     mainView.dismissProgressDialog();
                 })
                 .subscribe();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        mainView.showToast(R.string.google_play_services_error);
     }
 }

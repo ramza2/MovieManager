@@ -3,7 +3,7 @@ package kr.co.ramza.moviemanager.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -16,16 +16,17 @@ import com.jakewharton.rxbinding.view.RxView;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.di.component.ActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.module.ActivityModule;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.presenter.MovieRecommandPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.view.MovieRecommandView;
 
-public class MovieRecommandActivity extends AppCompatActivity implements MovieRecommandView{
+public class MovieRecommandActivity extends BaseActivity implements MovieRecommandView{
 
     @Inject
     MovieRecommandPresenter movieRecommandPresenter;
@@ -49,11 +50,28 @@ public class MovieRecommandActivity extends AppCompatActivity implements MovieRe
     CategorySpinnerAdapter categorySpinnerAdapter;
 
     @Override
+    protected int getContentViewResource() {
+        return R.layout.activity_movie_recommand;
+    }
+
+    @Override
+    protected ActivityComponent getInitializeCompoent() {
+        return DaggerActivityComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .activityModule(new ActivityModule(this))
+                .build();
+    }
+
+    @Override
+    protected void onInject(@Nullable ActivityComponent component) {
+        if (component != null) {
+            component.inject(this);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_recommand);
-        ButterKnife.bind(this);
-        ((MovieManagerApplication)getApplicationContext()).getApplicationComponent().inject(this);
 
         movieRecommandPresenter.setView(this);
 

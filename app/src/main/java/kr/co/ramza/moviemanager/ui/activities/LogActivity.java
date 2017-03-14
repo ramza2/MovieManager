@@ -3,7 +3,7 @@ package kr.co.ramza.moviemanager.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,17 +15,18 @@ import com.jakewharton.rxbinding.view.RxView;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.realm.RealmResults;
-import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.di.component.ActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.module.ActivityModule;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.presenter.LogPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.LogListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.LogView;
 
-public class LogActivity extends AppCompatActivity implements LogView{
+public class LogActivity extends BaseActivity implements LogView{
 
     @Inject
     LogPresenter logPresenter;
@@ -42,11 +43,28 @@ public class LogActivity extends AppCompatActivity implements LogView{
     private ItemTouchHelper itemTouchHelper;
 
     @Override
+    protected int getContentViewResource() {
+        return R.layout.activity_log;
+    }
+
+    @Override
+    protected ActivityComponent getInitializeCompoent() {
+        return DaggerActivityComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .activityModule(new ActivityModule(this))
+                .build();
+    }
+
+    @Override
+    protected void onInject(@Nullable ActivityComponent component) {
+        if (component != null) {
+            component.inject(this);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log);
-        ButterKnife.bind(this);
-        ((MovieManagerApplication)getApplicationContext()).getApplicationComponent().inject(this);
 
         logPresenter.setView(this);
 

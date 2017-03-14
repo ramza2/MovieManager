@@ -4,31 +4,16 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.jakewharton.rxbinding.view.RxView;
 
 import java.io.File;
@@ -36,23 +21,20 @@ import java.io.File;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
-import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.di.component.ActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerMainActivityComponent;
+import kr.co.ramza.moviemanager.di.component.MainActivityComponent;
+import kr.co.ramza.moviemanager.di.module.AuthModule;
+import kr.co.ramza.moviemanager.di.module.MainActivityModule;
 import kr.co.ramza.moviemanager.presenter.MainPresenter;
 import kr.co.ramza.moviemanager.ui.view.MainView;
 import rx.Observable;
 import rx.Subscriber;
 import rx.subscriptions.Subscriptions;
 
-public class MainActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener, MainView {
-
-    private GoogleApiClient googleApiClient;
-
-    private FirebaseAuth firebaseAuth;
-    private FirebaseAuth.AuthStateListener authListener;
+public class MainActivity extends BaseActivity implements MainView {
 
     @BindView(R.id.goolgeSignInBtn)
     SignInButton signInButton;
@@ -82,39 +64,35 @@ public class MainActivity extends AppCompatActivity implements
     ProgressDialog asyncDialog = null;
 
     @Override
+    protected int getContentViewResource() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected ActivityComponent getInitializeCompoent() {
+        return DaggerMainActivityComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .mainActivityModule(new MainActivityModule(this))
+                .authModule(new AuthModule(this))
+                .build();
+    }
+
+    @Override
+    protected void onInject(@Nullable ActivityComponent component) {
+        if (component != null) {
+            ((MainActivityComponent) component).inject(this);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        ((MovieManagerApplication) getApplicationContext()).getApplicationComponent().inject(this);
 
         mainPresenter.setView(this);
 
         asyncDialog = new ProgressDialog(this);
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         asyncDialog.setMessage(getString(R.string.authorizing));
-
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this , this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        authListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                // [START_EXCLUDE]
-                updateUI(user);
-                // [END_EXCLUDE]
-            }
-        };
 
         signInButton.setSize(SignInButton.SIZE_STANDARD);
 
@@ -162,16 +140,14 @@ public class MainActivity extends AppCompatActivity implements
     protected void onStart() {
         super.onStart();
 
-        firebaseAuth.addAuthStateListener(authListener);
+         mainPresenter.onStart();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        if(authListener != null){
-            firebaseAuth.removeAuthStateListener(authListener);
-        }
+        mainPresenter.onStop();
     }
 
     @OnClick({R.id.recommandBtn, R.id.categoryListBtn, R.id.movieListBtn, R.id.logListBtn, R.id.goolgeSignInBtn, R.id.signOutBtn, R.id.disconnectBtn})
@@ -191,13 +167,13 @@ public class MainActivity extends AppCompatActivity implements
                 startActivity(LogActivity.getIntent(this));
                 break;
             case R.id.goolgeSignInBtn:
-                signIn();
+                mainPresenter.signIn(RC_SIGN_IN);
                 break;
             case R.id.signOutBtn:
-                signOut();
+                mainPresenter.signOut();
                 break;
             case R.id.disconnectBtn:
-                revokeAccess();
+                mainPresenter.revokeAccess();
         }
     }
 
@@ -207,76 +183,8 @@ public class MainActivity extends AppCompatActivity implements
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            if (result.isSuccess()) {
-                GoogleSignInAccount account = result.getSignInAccount();
-                firebaseAuthWithGoogle(account);
-            } else {
-                // Google Sign In failed, update UI appropriately
-                // [START_EXCLUDE]
-                updateUI(null);
-                // [END_EXCLUDE]
-            }
+            mainPresenter.processSignInResult(data);
         }
-    }
-
-    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-        // [START_EXCLUDE silent]
-        showStatus(R.string.authorizing);
-        showProgressDialog();
-        // [END_EXCLUDE]
-
-        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
-        firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-
-                        // If sign in fails, display a message to the user. If sign in succeeds
-                        // the auth state listener will be notified and logic to handle the
-                        // signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                        // [START_EXCLUDE]
-                        dismissProgressDialog();
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-
-    private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    private void signOut() {
-        firebaseAuth.signOut();
-
-        Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
-                        updateUI(null);
-                        // [END_EXCLUDE]
-                    }
-                });
-    }
-
-    private void revokeAccess() {
-        firebaseAuth.signOut();
-
-        Auth.GoogleSignInApi.revokeAccess(googleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        // [START_EXCLUDE]
-                        updateUI(null);
-                        // [END_EXCLUDE]
-                    }
-                });
     }
 
     @Override
@@ -295,11 +203,17 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void showToast(int stringRes) {
+        Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void dismissProgressDialog() {
         if(asyncDialog != null && asyncDialog.isShowing()) asyncDialog.dismiss();
     }
 
-    private void updateUI(FirebaseUser user) {
+    @Override
+    public void updateUI(FirebaseUser user) {
         dismissProgressDialog();
         if (user != null) {
             statusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
@@ -314,10 +228,5 @@ public class MainActivity extends AppCompatActivity implements
             signInButton.setVisibility(View.VISIBLE);
             sign_out_and_disconnect.setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 }

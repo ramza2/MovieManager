@@ -3,7 +3,7 @@ package kr.co.ramza.moviemanager.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,10 +21,11 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import javax.inject.Inject;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.realm.RealmResults;
-import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.di.component.ActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.module.ActivityModule;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.presenter.MovieListPresenter;
@@ -33,7 +34,7 @@ import kr.co.ramza.moviemanager.ui.adapter.MovieListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.MovieListView;
 
-public class MovieListActivity extends AppCompatActivity implements MovieListView{
+public class MovieListActivity extends BaseActivity implements MovieListView{
 
     @BindView(R.id.addMovieBtn)
     Button addMovieBtn;
@@ -65,11 +66,28 @@ public class MovieListActivity extends AppCompatActivity implements MovieListVie
     private ItemTouchHelper itemTouchHelper;
 
     @Override
+    protected int getContentViewResource() {
+        return R.layout.activity_movie_list;
+    }
+
+    @Override
+    protected ActivityComponent getInitializeCompoent() {
+        return DaggerActivityComponent.builder()
+                .applicationComponent(getApplicationComponent())
+                .activityModule(new ActivityModule(this))
+                .build();
+    }
+
+    @Override
+    protected void onInject(@Nullable ActivityComponent component) {
+        if (component != null) {
+            component.inject(this);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_list);
-        ButterKnife.bind(this);
-        ((MovieManagerApplication) getApplicationContext()).getApplicationComponent().inject(this);
         movieListPresenter.setView(this);
 
         recyclerView.setHasFixedSize(true);

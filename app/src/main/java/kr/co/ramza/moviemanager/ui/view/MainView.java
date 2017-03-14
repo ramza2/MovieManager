@@ -1,5 +1,7 @@
 package kr.co.ramza.moviemanager.ui.view;
 
+import com.google.firebase.auth.FirebaseUser;
+
 import java.io.File;
 
 /**
@@ -12,5 +14,7 @@ public interface MainView {
     File getFile(String fileName);
     void showStatus(int stingRes);
     void showProgressDialog();
+    void showToast(int stringRes);
     void dismissProgressDialog();
+    void updateUI(FirebaseUser user);
 }

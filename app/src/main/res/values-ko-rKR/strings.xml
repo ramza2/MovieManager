@@ -44,4 +44,6 @@
     <string name="start_restore">복원 시작</string>
     <string name="restoration_complete">복원 완료</string>
     <string name="failed_category_registration">카테고리 등록 실패</string>
+    <string name="google_play_services_error">Google Play Services error.</string>
+    <string name="authentication_failed">Authentication failed.</string>
 </resources>
