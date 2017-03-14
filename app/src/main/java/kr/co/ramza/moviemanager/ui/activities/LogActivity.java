@@ -19,7 +19,6 @@ import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
-import kr.co.ramza.moviemanager.di.module.ActivityModule;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.presenter.LogPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.LogListAdapter;
@@ -51,7 +50,6 @@ public class LogActivity extends BaseActivity implements LogView{
     protected ActivityComponent getInitializeCompoent() {
         return DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .activityModule(new ActivityModule(this))
                 .build();
     }
 

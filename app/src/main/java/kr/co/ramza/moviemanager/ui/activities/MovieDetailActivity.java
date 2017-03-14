@@ -20,7 +20,6 @@ import butterknife.BindView;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
-import kr.co.ramza.moviemanager.di.module.ActivityModule;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.presenter.MovieDetailPresenter;
@@ -62,7 +61,6 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     protected ActivityComponent getInitializeCompoent() {
         return DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .activityModule(new ActivityModule(this))
                 .build();
     }
 
