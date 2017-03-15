@@ -13,7 +13,8 @@
     <EditText
         android:id="@+id/movieNameEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:hint="@string/name_of_video_to_search_or_add"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

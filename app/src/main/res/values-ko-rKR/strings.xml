@@ -44,6 +44,10 @@
     <string name="start_restore">복원 시작</string>
     <string name="restoration_complete">복원 완료</string>
     <string name="failed_category_registration">카테고리 등록 실패</string>
-    <string name="google_play_services_error">Google Play Services error.</string>
-    <string name="authentication_failed">Authentication failed.</string>
+    <string name="google_play_services_error">구글 플레이 서비스 에러.</string>
+    <string name="authentication_failed">인증 실패.</string>
+    <string name="please_select_category">카테고리를 선택해 주세요.</string>
+    <string name="please_input_video_name">동영상명을 입력해 주세요.</string>
+    <string name="video_added">동영상 추가 완료</string>
+    <string name="name_of_video_to_search_or_add">검색 또는 추가할 동영상명</string>
 </resources>

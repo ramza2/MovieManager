@@ -46,4 +46,8 @@
     <string name="failed_category_registration">Failed category registration</string>
     <string name="google_play_services_error">Google Play Services error.</string>
     <string name="authentication_failed">Authentication failed.</string>
+    <string name="please_select_category">Please select category</string>
+    <string name="please_input_video_name">Please input video name</string>
+    <string name="video_added">Video added</string>
+    <string name="name_of_video_to_search_or_add">Name of video to search or add</string>
 </resources>

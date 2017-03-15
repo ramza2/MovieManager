@@ -121,7 +121,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
         Observable<Category> categoryObservable =
                 Observable.create((Observable.OnSubscribe<Category>) subscriber -> subscriber.onNext((Category) categorySpinner.getSelectedItem()))
                         .filter(category -> {if(category == null || category.getId() <= 0){
-                            Toast.makeText(MovieListActivity.this, "Please select category", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MovieListActivity.this, R.string.please_select_category, Toast.LENGTH_SHORT).show();
                             return false;
                         }
                             return true;
@@ -131,7 +131,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                 Observable.create((Observable.OnSubscribe<String>) subscriber -> subscriber.onNext(movieNameEditText.getText().toString().trim()))
                         .filter(movieName->{
                             if(movieName.equals("")){
-                                Toast.makeText(MovieListActivity.this, "Please input video name", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MovieListActivity.this, R.string.please_input_video_name, Toast.LENGTH_SHORT).show();
                                 return false;
                             }
                             return true;
@@ -142,6 +142,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                 .subscribe(movie -> {
                     movieListPresenter.addMovie(movie);
                     movieNameEditText.setText(null);
+                    Toast.makeText(MovieListActivity.this, R.string.video_added, Toast.LENGTH_SHORT).show();
                 });
 
         movieListPresenter.loadMovieList();
