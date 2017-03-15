@@ -14,7 +14,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasCompo
 
     protected abstract int getContentViewResource();
 
-    protected abstract ActivityComponent getInitializeCompoent();
+    protected abstract ActivityComponent getInitializeComponent();
 
     protected abstract void onInject(@Nullable ActivityComponent component);
 
@@ -27,7 +27,7 @@ public abstract class BaseActivity extends AppCompatActivity implements HasCompo
 
         ButterKnife.bind(this);
 
-        this.component = getInitializeCompoent();
+        this.component = getInitializeComponent();
         if (this.component != null) {
             onInject(this.component);
         }

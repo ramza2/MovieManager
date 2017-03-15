@@ -25,7 +25,7 @@ public class CategorySpinnerAdapter extends BaseAdapter{
 
     @Inject
     public CategorySpinnerAdapter(RealmInteractor realmInteractor) {
-        categories = new ArrayList<>(realmInteractor.getAllCategorys());
+        categories = new ArrayList<>(realmInteractor.getAllCategories());
     }
 
     public void addTotalData(String all){

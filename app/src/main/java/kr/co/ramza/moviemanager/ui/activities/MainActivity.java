@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
@@ -68,7 +69,7 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    protected ActivityComponent getInitializeCompoent() {
+    protected ActivityComponent getInitializeComponent() {
         return DaggerMainActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .authModule(new AuthModule(this))
@@ -109,9 +110,7 @@ public class MainActivity extends BaseActivity implements MainView {
         RxView.clicks(restoreBtn)
                 .flatMap(x->dialog(this, R.string.restore, R.string.question_restore))
                 .filter(x-> x == true)
-                .subscribe(event->{
-                    mainPresenter.restore();
-                });
+                .subscribe(event-> mainPresenter.restore());
     }
 
     Observable<Boolean> dialog(Context context, int title, int message) {
@@ -148,12 +147,12 @@ public class MainActivity extends BaseActivity implements MainView {
         mainPresenter.onStop();
     }
 
-    @OnClick({R.id.recommandBtn, R.id.categoryListBtn, R.id.movieListBtn, R.id.logListBtn, R.id.goolgeSignInBtn, R.id.signOutBtn, R.id.disconnectBtn})
+    @OnClick({R.id.recommendBtn, R.id.categoryListBtn, R.id.movieListBtn, R.id.logListBtn, R.id.goolgeSignInBtn, R.id.signOutBtn, R.id.disconnectBtn})
     public void onClick(View view){
         int id = view.getId();
         switch (id) {
-            case R.id.recommandBtn:
-                startActivity(MovieRecommandActivity.getIntent(this));
+            case R.id.recommendBtn:
+                startActivity(MovieRecommendActivity.getIntent(this));
                 break;
             case R.id.categoryListBtn:
                 startActivity(CategoryListActivity.getIntent(this));
@@ -191,7 +190,7 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void showStatus(int stingRes) {
+    public void showStatus(@StringRes int stingRes) {
         asyncDialog.setMessage(getString(stingRes));
     }
 
@@ -201,7 +200,7 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void showToast(int stringRes) {
+    public void showToast(@StringRes int stringRes) {
         Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show();
     }
 

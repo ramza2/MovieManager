@@ -27,7 +27,7 @@
         <activity
             android:name=".ui.activities.MovieDetailActivity"
             android:windowSoftInputMode="stateHidden" />
-        <activity android:name=".ui.activities.MovieRecommandActivity" />
+        <activity android:name=".ui.activities.MovieRecommendActivity" />
         <activity android:name=".ui.activities.LogActivity"></activity>
     </application>
 

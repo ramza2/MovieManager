@@ -47,7 +47,7 @@ public class LogActivity extends BaseActivity implements LogView{
     }
 
     @Override
-    protected ActivityComponent getInitializeCompoent() {
+    protected ActivityComponent getInitializeComponent() {
         return DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();

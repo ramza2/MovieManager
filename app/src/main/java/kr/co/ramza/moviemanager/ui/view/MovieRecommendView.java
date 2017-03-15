@@ -8,6 +8,6 @@ import kr.co.ramza.moviemanager.model.Movie;
  * ramza@activednc.com
  */
 
-public interface MovieRecommandView {
-    void showRecommandMovie(Movie movie);
+public interface MovieRecommendView {
+    void showRecommendMovie(Movie movie);
 }

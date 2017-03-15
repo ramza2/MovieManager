@@ -50,18 +50,15 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     public void onBindViewHolder(ViewHolder holder, int position) {
         Movie movie = movieRealmResults.get(position);
         holder.itemView.setTag(movie.getId());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long id = (long) v.getTag();
-                Context context = v.getContext();
-                context.startActivity(MovieDetailActivity.getIntent(context, id));
-            }
+        holder.itemView.setOnClickListener(v -> {
+            long id = (long) v.getTag();
+            Context context = v.getContext();
+            context.startActivity(MovieDetailActivity.getIntent(context, id));
         });
         holder.numTextView.setText((position + 1) + ".");
         holder.movieNameTextView.setText(movie.getName());
         Category category = movie.getCategory();
-        holder.categorNameTextView.setText(category != null ? category.getName() : null);
+        holder.categoryNameTextView.setText(category != null ? category.getName() : null);
         holder.haveSeenTextView.setText(movie.isHaveSeen() ?
                 holder.itemView.getContext().getString(R.string.have_seen) : holder.itemView.getContext().getString(R.string.not_have_seen) );
         holder.starNumTextView.setText(String.valueOf(movie.getStarNum()));
@@ -93,8 +90,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
         TextView haveSeenTextView;
         @BindView(R.id.starNumTextView)
         TextView starNumTextView;
-        @BindView(R.id.categorNameTextView)
-        TextView categorNameTextView;
+        @BindView(R.id.categoryNameTextView)
+        TextView categoryNameTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);

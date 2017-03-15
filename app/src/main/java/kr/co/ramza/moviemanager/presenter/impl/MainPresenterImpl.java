@@ -8,11 +8,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.Result;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FileDownloadTask;
@@ -62,14 +57,11 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
 
         this.firebaseAuthInteractor.init(this);
 
-        authListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                // [START_EXCLUDE]
-                mainView.updateUI(user);
-                // [END_EXCLUDE]
-            }
+        authListener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            // [START_EXCLUDE]
+            mainView.updateUI(user);
+            // [END_EXCLUDE]
         };
     }
 
@@ -95,22 +87,12 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
 
     @Override
     public void signOut() {
-        firebaseAuthInteractor.signOut(new ResultCallback() {
-            @Override
-            public void onResult(@NonNull Result result) {
-                mainView.updateUI(null);
-            }
-        });
+        firebaseAuthInteractor.signOut(result -> mainView.updateUI(null));
     }
 
     @Override
     public void revokeAccess() {
-        firebaseAuthInteractor.revokeAccess(new ResultCallback() {
-            @Override
-            public void onResult(@NonNull Result result) {
-                mainView.updateUI(null);
-            }
-        });
+        firebaseAuthInteractor.revokeAccess(result -> mainView.updateUI(null));
     }
 
     @Override
@@ -133,20 +115,17 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
         mainView.showProgressDialog();
         // [END_EXCLUDE]
 
-        firebaseAuthInteractor.signInWithCredential(acct, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
+        firebaseAuthInteractor.signInWithCredential(acct, task -> {
 
-                // If sign in fails, display a message to the user. If sign in succeeds
-                // the auth state listener will be notified and logic to handle the
-                // signed in user can be handled in the listener.
-                if (!task.isSuccessful()) {
-                    mainView.showToast(R.string.authentication_failed);
-                }
-                // [START_EXCLUDE]
-                mainView.dismissProgressDialog();
-                // [END_EXCLUDE]
+            // If sign in fails, display a message to the user. If sign in succeeds
+            // the auth state listener will be notified and logic to handle the
+            // signed in user can be handled in the listener.
+            if (!task.isSuccessful()) {
+                mainView.showToast(R.string.authentication_failed);
             }
+            // [START_EXCLUDE]
+            mainView.dismissProgressDialog();
+            // [END_EXCLUDE]
         });
     }
 
@@ -163,7 +142,7 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
             boolean saveSuccess = false;
             try {
                 File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
-                realmInteractor.backup(realmInteractor.getAllCategorys(), categoryFile);
+                realmInteractor.backup(realmInteractor.getAllCategories(), categoryFile);
                 File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
                 realmInteractor.backup(realmInteractor.getAllMovies(), movieFile);
                 File logFile = mainView.getFile(Conts.LOG_FILE_NAME);

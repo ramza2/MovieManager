@@ -67,7 +67,7 @@ public class RealmInteractor {
         }
     }
 
-    public RealmResults<Category> getAllCategorys(){
+    public RealmResults<Category> getAllCategories(){
         Realm realm = Realm.getDefaultInstance();
         return realm.where(Category.class).findAll();
     }
@@ -287,7 +287,7 @@ public class RealmInteractor {
         try {
             br = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
-            String s = null;
+            String s;
             while((s = br.readLine()) != null){
                 sb.append(s);
             }

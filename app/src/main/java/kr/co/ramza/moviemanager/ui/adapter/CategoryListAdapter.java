@@ -43,14 +43,14 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     @Override
     public CategoryListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category_list, parent, false);
-        ViewHolder vh = new ViewHolder(v, new CategoryNameTextwatcher());
+        ViewHolder vh = new ViewHolder(v, new CategoryNameTextWatcher());
         return vh;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Category category = categoryRealmResults.get(position);
-        holder.categoryNameTextwatcher.setCategory(category);
+        holder.categoryNameTextWatcher.setCategory(category);
         holder.categoryNameEditText.setText(category.getName());
     }
 
@@ -71,7 +71,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         notifyItemRemoved(position);
     }
 
-    public class CategoryNameTextwatcher implements TextWatcher {
+    public class CategoryNameTextWatcher implements TextWatcher {
         private Category category;
 
         public void setCategory(Category category) {
@@ -98,13 +98,13 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
         @BindView(R.id.categoryNameEditText)
         EditText categoryNameEditText;
 
-        CategoryNameTextwatcher categoryNameTextwatcher;
+        CategoryNameTextWatcher categoryNameTextWatcher;
 
-        public ViewHolder(View itemView, CategoryNameTextwatcher categoryNameTextwatcher) {
+        public ViewHolder(View itemView, CategoryNameTextWatcher categoryNameTextWatcher) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            this.categoryNameTextwatcher = categoryNameTextwatcher;
-            this.categoryNameEditText.addTextChangedListener(categoryNameTextwatcher);
+            this.categoryNameTextWatcher = categoryNameTextWatcher;
+            this.categoryNameEditText.addTextChangedListener(categoryNameTextWatcher);
         }
 
         @Override

@@ -52,14 +52,11 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         Log log  = logRealmResults.get(position);
         Movie movie = log.getMovie();
         holder.itemView.setTag(movie != null ? movie.getId() : 0);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                long id = (long) v.getTag();
-                if(id > 0){
-                    Context context = v.getContext();
-                    context.startActivity(MovieDetailActivity.getIntent(context, id));
-                }
+        holder.itemView.setOnClickListener(v -> {
+            long id = (long) v.getTag();
+            if(id > 0){
+                Context context = v.getContext();
+                context.startActivity(MovieDetailActivity.getIntent(context, id));
             }
         });
         holder.numTextView.setText((position + 1) + ".");
@@ -68,7 +65,7 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
             category = movie.getCategory();
         }
         holder.movieNameTextView.setText(movie != null ? movie.getName() : null);
-        holder.categorNameTextView.setText(category != null ? category.getName() : null);
+        holder.categoryNameTextView.setText(category != null ? category.getName() : null);
     }
 
     @Override
@@ -93,8 +90,8 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         TextView numTextView;
         @BindView(R.id.movieNameTextView)
         TextView movieNameTextView;
-        @BindView(R.id.categorNameTextView)
-        TextView categorNameTextView;
+        @BindView(R.id.categoryNameTextView)
+        TextView categoryNameTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);

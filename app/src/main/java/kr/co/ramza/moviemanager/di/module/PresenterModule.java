@@ -7,13 +7,13 @@ import kr.co.ramza.moviemanager.presenter.LogPresenter;
 import kr.co.ramza.moviemanager.presenter.MainPresenter;
 import kr.co.ramza.moviemanager.presenter.MovieDetailPresenter;
 import kr.co.ramza.moviemanager.presenter.MovieListPresenter;
-import kr.co.ramza.moviemanager.presenter.MovieRecommandPresenter;
+import kr.co.ramza.moviemanager.presenter.MovieRecommendPresenter;
 import kr.co.ramza.moviemanager.presenter.impl.CategoryListPresenterImpl;
 import kr.co.ramza.moviemanager.presenter.impl.LogPresenterImpl;
 import kr.co.ramza.moviemanager.presenter.impl.MainPresenterImpl;
 import kr.co.ramza.moviemanager.presenter.impl.MovieDetailPresenterImpl;
 import kr.co.ramza.moviemanager.presenter.impl.MovieListPresenterImpl;
-import kr.co.ramza.moviemanager.presenter.impl.MovieRecommandPresenterImpl;
+import kr.co.ramza.moviemanager.presenter.impl.MovieRecommendPresenterImpl;
 
 /**
  * Created by 전창현 on 2017-03-13.
@@ -39,5 +39,5 @@ public abstract class PresenterModule {
     public abstract MovieListPresenter bindMovieListPresenter(MovieListPresenterImpl movieListPresenter);
 
     @Binds
-    public abstract MovieRecommandPresenter bindMovieRecommandPresenter(MovieRecommandPresenterImpl movieRecommandPresenter);
+    public abstract MovieRecommendPresenter bindMovieRecommendPresenter(MovieRecommendPresenterImpl movieRecommendPresenter);
 }

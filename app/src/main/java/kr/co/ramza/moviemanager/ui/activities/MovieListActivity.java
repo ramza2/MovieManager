@@ -72,7 +72,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     }
 
     @Override
-    protected ActivityComponent getInitializeCompoent() {
+    protected ActivityComponent getInitializeComponent() {
         return DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -52,7 +53,7 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
     }
 
     @Override
-    protected ActivityComponent getInitializeCompoent() {
+    protected ActivityComponent getInitializeComponent() {
         return DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();
@@ -104,7 +105,7 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
     }
 
     @Override
-    public void showToast(int stringRes) {
+    public void showToast(@StringRes int stringRes) {
         Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show();
     }
 

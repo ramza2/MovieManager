@@ -21,14 +21,14 @@ import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
-import kr.co.ramza.moviemanager.presenter.MovieRecommandPresenter;
+import kr.co.ramza.moviemanager.presenter.MovieRecommendPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
-import kr.co.ramza.moviemanager.ui.view.MovieRecommandView;
+import kr.co.ramza.moviemanager.ui.view.MovieRecommendView;
 
-public class MovieRecommandActivity extends BaseActivity implements MovieRecommandView{
+public class MovieRecommendActivity extends BaseActivity implements MovieRecommendView {
 
     @Inject
-    MovieRecommandPresenter movieRecommandPresenter;
+    MovieRecommendPresenter movieRecommendPresenter;
 
     @BindView(R.id.categorySpinner)
     Spinner categorySpinner;
@@ -36,25 +36,25 @@ public class MovieRecommandActivity extends BaseActivity implements MovieRecomma
     CheckBox haveSeenCheckBox;
     @BindView(R.id.searchTypeSpinner)
     Spinner searchTypeSpinner;
-    @BindView(R.id.recommandBtn)
-    Button recommandBtn;
-    @BindView(R.id.movieRecommandLayout)
-    LinearLayout movieRecommandLayout;
+    @BindView(R.id.recommendBtn)
+    Button recommendBtn;
+    @BindView(R.id.movieRecommendLayout)
+    LinearLayout movieRecommendLayout;
     @BindView(R.id.movieNameTextView)
     TextView movieNameTextView;
-    @BindView(R.id.categorNameTextView)
-    TextView categorNameTextView;
+    @BindView(R.id.categoryNameTextView)
+    TextView categoryNameTextView;
 
     @Inject
     CategorySpinnerAdapter categorySpinnerAdapter;
 
     @Override
     protected int getContentViewResource() {
-        return R.layout.activity_movie_recommand;
+        return R.layout.activity_movie_recommend;
     }
 
     @Override
-    protected ActivityComponent getInitializeCompoent() {
+    protected ActivityComponent getInitializeComponent() {
         return DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();
@@ -71,33 +71,33 @@ public class MovieRecommandActivity extends BaseActivity implements MovieRecomma
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        movieRecommandPresenter.setView(this);
+        movieRecommendPresenter.setView(this);
 
         categorySpinner.setAdapter(categorySpinnerAdapter);
 
         String[] searchType = {getString(R.string.mix),getString(R.string.sequence), getString(R.string.random)};
-        searchTypeSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, searchType));
+        searchTypeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, searchType));
 
-        RxView.clicks(recommandBtn)
-                .subscribe(event->movieRecommandPresenter.startRecommand((Category) categorySpinner.getSelectedItem(),
+        RxView.clicks(recommendBtn)
+                .subscribe(event-> movieRecommendPresenter.startRecommend((Category) categorySpinner.getSelectedItem(),
                         haveSeenCheckBox.isChecked(), searchTypeSpinner.getSelectedItemPosition()));
 
-        RxView.clicks(movieRecommandLayout)
+        RxView.clicks(movieRecommendLayout)
                 .subscribe(event->{
-                    startActivity(MovieDetailActivity.getIntent(MovieRecommandActivity.this, (Long) movieRecommandLayout.getTag()));
+                    startActivity(MovieDetailActivity.getIntent(MovieRecommendActivity.this, (Long) movieRecommendLayout.getTag()));
                     finish();
                 });
     }
 
     @Override
-    public void showRecommandMovie(Movie movie) {
-        movieRecommandLayout.setTag(movie.getId());
+    public void showRecommendMovie(Movie movie) {
+        movieRecommendLayout.setTag(movie.getId());
         movieNameTextView.setText(movie.getName());
         Category category = movie.getCategory();
-        categorNameTextView.setText(category != null ? category.getName() : null);
+        categoryNameTextView.setText(category != null ? category.getName() : null);
     }
 
     public static Intent getIntent(Context context){
-        return new Intent(context, MovieRecommandActivity.class);
+        return new Intent(context, MovieRecommendActivity.class);
     }
 }

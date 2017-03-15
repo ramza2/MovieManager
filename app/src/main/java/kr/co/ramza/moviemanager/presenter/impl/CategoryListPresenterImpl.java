@@ -33,7 +33,7 @@ public class CategoryListPresenterImpl implements CategoryListPresenter {
 
     @Override
     public void loadCategoryList() {
-        categoryListView.showList(realmInteractor.getAllCategorys());
+        categoryListView.showList(realmInteractor.getAllCategories());
     }
 
     @Override

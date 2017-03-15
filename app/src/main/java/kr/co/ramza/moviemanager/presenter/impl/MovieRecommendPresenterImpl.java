@@ -6,8 +6,8 @@ import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
-import kr.co.ramza.moviemanager.presenter.MovieRecommandPresenter;
-import kr.co.ramza.moviemanager.ui.view.MovieRecommandView;
+import kr.co.ramza.moviemanager.presenter.MovieRecommendPresenter;
+import kr.co.ramza.moviemanager.ui.view.MovieRecommendView;
 import kr.co.ramza.moviemanager.variable.Conts;
 
 /**
@@ -16,23 +16,23 @@ import kr.co.ramza.moviemanager.variable.Conts;
  * ramza@activednc.com
  */
 
-public class MovieRecommandPresenterImpl implements MovieRecommandPresenter {
+public class MovieRecommendPresenterImpl implements MovieRecommendPresenter {
     private RealmInteractor realmInteractor;
 
-    private MovieRecommandView movieRecommandView;
+    private MovieRecommendView movieRecommendView;
 
     @Inject
-    public MovieRecommandPresenterImpl(RealmInteractor realmInteractor) {
+    public MovieRecommendPresenterImpl(RealmInteractor realmInteractor) {
         this.realmInteractor = realmInteractor;
     }
 
     @Override
-    public void setView(MovieRecommandView movieRecommandView) {
-        this.movieRecommandView = movieRecommandView;
+    public void setView(MovieRecommendView movieRecommendView) {
+        this.movieRecommendView = movieRecommendView;
     }
 
     @Override
-    public void startRecommand(Category category, boolean haveSeen, int searchType) {
+    public void startRecommend(Category category, boolean haveSeen, int searchType) {
         Movie movie = null;
         int currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
         switch (searchType) {
@@ -62,7 +62,7 @@ public class MovieRecommandPresenterImpl implements MovieRecommandPresenter {
         }
 
         if(movie != null){
-            movieRecommandView.showRecommandMovie(movie);
+            movieRecommendView.showRecommendMovie(movie);
             Log newLog = new Log();
             newLog.setMovie(movie);
             newLog.setSearchType(currentSearchType);

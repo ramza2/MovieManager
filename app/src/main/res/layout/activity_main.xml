@@ -65,8 +65,8 @@
         android:layout_weight="1"/>
 
     <Button
-        android:id="@+id/recommandBtn"
-        android:text="@string/recommand_video"
+        android:id="@+id/recommendBtn"
+        android:text="@string/recommend_video"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />
@@ -90,7 +90,7 @@
 
     <Button
         android:id="@+id/movieListBtn"
-        android:text="@string/viedo_list"
+        android:text="@string/video_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />
@@ -102,7 +102,7 @@
 
     <Button
         android:id="@+id/logListBtn"
-        android:text="@string/reommand_log"
+        android:text="@string/recommend_log"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal" />

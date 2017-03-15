@@ -3,6 +3,7 @@ package kr.co.ramza.moviemanager.ui.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -58,7 +59,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     }
 
     @Override
-    protected ActivityComponent getInitializeCompoent() {
+    protected ActivityComponent getInitializeComponent() {
         return DaggerActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();
@@ -114,7 +115,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
         starNumRatingBar.setRating(movie.getStarNum());
     }
 
-    public static Intent getIntent(Context context, long id){
+    public static Intent getIntent(Context context,@IntRange(from = 1) long id){
         Intent intent = new Intent(context, MovieDetailActivity.class);
         intent.putExtra(EXTRA_ID, id);
         return intent;

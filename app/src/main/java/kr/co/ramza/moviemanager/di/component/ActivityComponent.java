@@ -9,7 +9,7 @@ import kr.co.ramza.moviemanager.ui.activities.CategoryListActivity;
 import kr.co.ramza.moviemanager.ui.activities.LogActivity;
 import kr.co.ramza.moviemanager.ui.activities.MovieDetailActivity;
 import kr.co.ramza.moviemanager.ui.activities.MovieListActivity;
-import kr.co.ramza.moviemanager.ui.activities.MovieRecommandActivity;
+import kr.co.ramza.moviemanager.ui.activities.MovieRecommendActivity;
 
 @PerActivity
 @Component(
@@ -22,6 +22,6 @@ public interface ActivityComponent {
     void inject(@NonNull CategoryListActivity categoryListActivity);
     void inject(@NonNull MovieListActivity movieListActivity);
     void inject(@NonNull MovieDetailActivity movieDetailActivity);
-    void inject(@NonNull MovieRecommandActivity movieRecommandActivity);
+    void inject(@NonNull MovieRecommendActivity movieRecommendActivity);
     void inject(@NonNull LogActivity logActivity);
 }
