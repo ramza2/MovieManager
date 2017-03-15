@@ -23,6 +23,14 @@ public class Movie extends RealmObject {
     private Date registDt;
     private Date modifyDt;
 
+    public Movie() {
+    }
+
+    public Movie(Category category, String name) {
+        this.category = category;
+        this.name = name;
+    }
+
     public Category getCategory() {
         return category;
     }

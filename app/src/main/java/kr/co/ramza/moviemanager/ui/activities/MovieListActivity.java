@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
 import com.jakewharton.rxbinding.widget.RxAdapterView;
@@ -32,6 +33,7 @@ import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.adapter.MovieListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.MovieListView;
+import rx.Observable;
 
 public class MovieListActivity extends BaseActivity implements MovieListView{
 
@@ -111,15 +113,34 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
         RxTextView.textChangeEvents(movieNameEditText)
                 .subscribe(event->movieListPresenter.loadMovieList());
 
-        String[] haeSeens = {getString(R.string.all), getString(R.string.not_have_seen), getString(R.string.have_seen)};
-        haveSeenSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, haeSeens));
+        String[] hasSeen = {getString(R.string.all), getString(R.string.not_have_seen), getString(R.string.have_seen)};
+        haveSeenSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, hasSeen));
         RxAdapterView.selectionEvents(haveSeenSpinner)
                 .subscribe(event->movieListPresenter.loadMovieList());
 
+        Observable<Category> categoryObservable =
+                Observable.create((Observable.OnSubscribe<Category>) subscriber -> subscriber.onNext((Category) categorySpinner.getSelectedItem()))
+                        .filter(category -> {if(category == null || category.getId() <= 0){
+                            Toast.makeText(MovieListActivity.this, "Please select category", Toast.LENGTH_SHORT).show();
+                            return false;
+                        }
+                            return true;
+                        });
+
+        Observable<String> movieNameObservable =
+                Observable.create((Observable.OnSubscribe<String>) subscriber -> subscriber.onNext(movieNameEditText.getText().toString().trim()))
+                        .filter(movieName->{
+                            if(movieName.equals("")){
+                                Toast.makeText(MovieListActivity.this, "Please input video name", Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
+                            return true;
+                        });
+
         RxView.clicks(addMovieBtn)
-                .subscribe((v)->{
-                    //동영상 등록 화면 이동
-                    movieListPresenter.addMovie(movieNameEditText.getText().toString(), (Category) categorySpinner.getSelectedItem());
+                .flatMap(event -> Observable.zip(categoryObservable, movieNameObservable, (category, name) -> new Movie(category, name)))
+                .subscribe(movie -> {
+                    movieListPresenter.addMovie(movie);
                     movieNameEditText.setText(null);
                 });
 

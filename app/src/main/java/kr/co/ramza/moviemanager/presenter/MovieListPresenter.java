@@ -1,6 +1,6 @@
 package kr.co.ramza.moviemanager.presenter;
 
-import kr.co.ramza.moviemanager.model.Category;
+import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.ui.view.MovieListView;
 
 /**
@@ -12,5 +12,5 @@ import kr.co.ramza.moviemanager.ui.view.MovieListView;
 public interface MovieListPresenter {
     void setView(MovieListView movieListView);
     void loadMovieList();
-    void addMovie(String name, Category category);
+    void addMovie(Movie movie);
 }

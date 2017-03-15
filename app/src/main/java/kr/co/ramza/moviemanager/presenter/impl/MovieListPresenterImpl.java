@@ -2,7 +2,6 @@ package kr.co.ramza.moviemanager.presenter.impl;
 
 import javax.inject.Inject;
 
-import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.MovieListPresenter;
@@ -39,12 +38,7 @@ public class MovieListPresenterImpl implements MovieListPresenter {
     }
 
     @Override
-    public void addMovie(String name, Category category) {
-        if(category.getId() > 0 && !name.trim().equals("")){
-            Movie newMovie = new Movie();
-            newMovie.setName(name.trim());
-            newMovie.setCategory(category);
-            realmInteractor.addMovie(newMovie).subscribe();
-        }
+    public void addMovie(Movie movie) {
+        realmInteractor.addMovie(movie).subscribe();
     }
 }
