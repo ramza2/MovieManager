@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentActivity;
 
 import dagger.Module;
 import dagger.Provides;
+import kr.co.ramza.moviemanager.di.annotation.PerActivity;
 import kr.co.ramza.moviemanager.model.interactor.FirebaseAuthInteractor;
 
 /**
@@ -20,6 +21,7 @@ public class AuthModule {
         this.fragmentActivity = fragmentActivity;
     }
 
+    @PerActivity
     @Provides
     public FirebaseAuthInteractor provideFirebaseAuthInteractor(){
         return new FirebaseAuthInteractor(this.fragmentActivity);
