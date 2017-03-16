@@ -150,13 +150,13 @@ public class RealmInteractor {
         return realm.where(Movie.class).equalTo("id", movieId).findFirst();
     }
 
-    public Movie getFirstMovie(String name, long categoryId, Boolean haveSeen){
-        return getMovies(name, categoryId, haveSeen).first();
+    public Movie getFirstMovie(long categoryId, Boolean haveSeen){
+        return getMovies(null, categoryId, haveSeen).first();
     }
 
-    public Movie getRandomMovie(String name, long categoryId, Boolean haveSeen){
+    public Movie getRandomMovie(long categoryId, Boolean haveSeen){
         Random random = new Random();
-        RealmResults<Movie> movieRealmResults = getMovies(name, categoryId, haveSeen);
+        RealmResults<Movie> movieRealmResults = getMovies(null, categoryId, haveSeen);
         return movieRealmResults.get(random.nextInt(movieRealmResults.size()));
     }
 
