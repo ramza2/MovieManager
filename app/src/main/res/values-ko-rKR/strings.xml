@@ -50,4 +50,9 @@
     <string name="please_input_video_name">동영상명을 입력해 주세요.</string>
     <string name="video_added">동영상 추가 완료</string>
     <string name="name_of_video_to_search_or_add">검색 또는 추가할 동영상명</string>
+    <string name="add_log">로그 추가</string>
+    <string name="question_add_log">추천 로그를 추가하시겠습니까?</string>
+    <string name="add_log_success">로그 추가 완료</string>
+    <string name="add_log_fail">로그 추가 실패</string>
+    <string name="detail_view">상세보기</string>
 </resources>

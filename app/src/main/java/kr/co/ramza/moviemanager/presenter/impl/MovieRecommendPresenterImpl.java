@@ -1,5 +1,7 @@
 package kr.co.ramza.moviemanager.presenter.impl;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import kr.co.ramza.moviemanager.model.Category;
@@ -33,40 +35,36 @@ public class MovieRecommendPresenterImpl implements MovieRecommendPresenter {
 
     @Override
     public void startRecommend(Category category, boolean haveSeen, int searchType) {
-        Movie movie = null;
+        List<Movie> movieList = null;
         int currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
         switch (searchType) {
             case Conts.SEARCH_TYPE_SEQUENCE:
                 currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
-                movie = realmInteractor.getFirstMovie(category.getId(), haveSeen);
+                movieList = realmInteractor.getFirstMovie(category.getId(), haveSeen);
                 break;
             case Conts.SEARCH_TYPE_RANDOM:
                 currentSearchType = Conts.SEARCH_TYPE_RANDOM;
-                movie = realmInteractor.getRandomMovie(category.getId(), haveSeen);
+                movieList = realmInteractor.getRandomMovie(category.getId(), haveSeen);
                 break;
             case Conts.SEARCH_TYPE_MIX:
                 Log lastLog = realmInteractor.getLastLog(category.getId());
                 if(lastLog != null){
                     if(lastLog.getSearchType() == Conts.SEARCH_TYPE_SEQUENCE){
                         currentSearchType = Conts.SEARCH_TYPE_RANDOM;
-                        movie = realmInteractor.getRandomMovie(category.getId(), haveSeen);
+                        movieList = realmInteractor.getRandomMovie(category.getId(), haveSeen);
                     }else{
                         currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
-                        movie = realmInteractor.getFirstMovie(category.getId(), haveSeen);
+                        movieList = realmInteractor.getFirstMovie(category.getId(), haveSeen);
                     }
                 }else{
                     currentSearchType = Conts.SEARCH_TYPE_SEQUENCE;
-                    movie = realmInteractor.getFirstMovie(category.getId(), haveSeen);
+                    movieList = realmInteractor.getFirstMovie(category.getId(), haveSeen);
                 }
                 break;
         }
 
-        if(movie != null){
-            movieRecommendView.showRecommendMovie(movie);
-            Log newLog = new Log();
-            newLog.setMovie(movie);
-            newLog.setSearchType(currentSearchType);
-            realmInteractor.addLog(newLog).subscribe();
+        if(movieList != null){
+            movieRecommendView.showRecommendMovie(currentSearchType, movieList);
         }
     }
 }

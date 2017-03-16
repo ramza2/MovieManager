@@ -50,4 +50,9 @@
     <string name="please_input_video_name">Please input video name</string>
     <string name="video_added">Video added</string>
     <string name="name_of_video_to_search_or_add">Name of video to search or add</string>
+    <string name="add_log">Add Log</string>
+    <string name="question_add_log">Do you want to add logs to recommend?</string>
+    <string name="add_log_success">Log added successfully</string>
+    <string name="add_log_fail">Failed to add log</string>
+    <string name="detail_view">View detail</string>
 </resources>

@@ -15,7 +15,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 import io.realm.Case;
@@ -150,14 +152,45 @@ public class RealmInteractor {
         return realm.where(Movie.class).equalTo("id", movieId).findFirst();
     }
 
-    public Movie getFirstMovie(long categoryId, Boolean haveSeen){
-        return getMovies(null, categoryId, haveSeen).first();
+    public List<Movie> getFirstMovie(long categoryId, Boolean haveSeen){
+        Movie movie = getMovies(null, categoryId, haveSeen).first();
+        return getLikeSearchResultByMovieName(movie);
     }
 
-    public Movie getRandomMovie(long categoryId, Boolean haveSeen){
+    public List<Movie> getRandomMovie(long categoryId, Boolean haveSeen){
         Random random = new Random();
         RealmResults<Movie> movieRealmResults = getMovies(null, categoryId, haveSeen);
-        return movieRealmResults.get(random.nextInt(movieRealmResults.size()));
+        Movie movie = movieRealmResults.get(random.nextInt(movieRealmResults.size()));
+        return getLikeSearchResultByMovieName(movie);
+    }
+
+    private List<Movie> getLikeSearchResultByMovieName(Movie movie){
+        String movieName = movie.getName();
+        String searchMovieName = substringMovieName(movieName, "&");
+        searchMovieName = substringMovieName(searchMovieName, ":");
+        String[] movieNameSplit = searchMovieName.split(" ");
+
+        String likeSearchName = "";
+        if(movieNameSplit.length > 1){
+            for (int i = 0; i < movieNameSplit.length - 1; i++) {
+                likeSearchName += " " + movieNameSplit[i];
+            }
+        }else{
+            likeSearchName = movieNameSplit[0];
+        }
+        likeSearchName = likeSearchName.trim();
+
+        RealmResults<Movie> likeSearchResult = getMovies(likeSearchName, movie.getCategory().getId(), movie.isHaveSeen())
+                .where().beginsWith("name", likeSearchName, Case.INSENSITIVE).notEqualTo("name", movieName).findAll();
+        List<Movie> movieList = new ArrayList<>(likeSearchResult);
+        movieList.add(0, movie);
+        return movieList;
+    }
+
+    private String substringMovieName(String movieName, String ch){
+        int lastIndex = movieName.indexOf(ch);
+        if(lastIndex != -1) movieName = movieName.substring(0, lastIndex);
+        return movieName;
     }
 
     public void modifyMovieInfo(Movie movie, String name, Category category, boolean haveSeen, float starNum){
@@ -191,12 +224,10 @@ public class RealmInteractor {
                 .map(log->{
                     log.setId(getNextKey(Log.class));
                     log.setLogDt(new Date());
-                    return log;
-                })
-                .doOnNext(log -> {
                     realm.beginTransaction();
                     realm.copyToRealm(log);
                     realm.commitTransaction();
+                    return log;
                 });
 
         return logAddObservable;

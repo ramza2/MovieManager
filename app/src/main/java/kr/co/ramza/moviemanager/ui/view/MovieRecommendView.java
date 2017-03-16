@@ -1,5 +1,7 @@
 package kr.co.ramza.moviemanager.ui.view;
 
+import java.util.List;
+
 import kr.co.ramza.moviemanager.model.Movie;
 
 /**
@@ -9,5 +11,5 @@ import kr.co.ramza.moviemanager.model.Movie;
  */
 
 public interface MovieRecommendView {
-    void showRecommendMovie(Movie movie);
+    void showRecommendMovie(int searchType, List<Movie> movieRealmResults);
 }

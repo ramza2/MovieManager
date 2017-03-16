@@ -113,7 +113,7 @@ public class MainActivity extends BaseActivity implements MainView {
                 .subscribe(event-> mainPresenter.restore());
     }
 
-    Observable<Boolean> dialog(Context context, int title, int message) {
+    Observable<Boolean> dialog(Context context,@StringRes int title,@StringRes int message) {
         return Observable.create((Subscriber<? super Boolean> subscriber) -> {
             final AlertDialog ad = new AlertDialog.Builder(context)
                     .setTitle(title)
