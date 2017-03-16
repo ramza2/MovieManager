@@ -119,6 +119,17 @@ public class RecommendMovieListAdapter extends RecyclerView.Adapter<RecommendMov
         });
     }
 
+    public void checkValidList() {
+        if(movieList != null){
+            for (int i = movieList.size() - 1; i >= 0; i--) {
+                Movie movie = movieList.get(i);
+                if(!movie.isValid()){
+                    movieList.remove(movie);
+                }
+            }
+        }
+    }
+
     public static class ViewHolder extends RecyclerView.ViewHolder{
         @BindView(R.id.numTextView)
         TextView numTextView;

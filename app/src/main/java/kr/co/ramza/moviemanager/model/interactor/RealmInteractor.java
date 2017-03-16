@@ -153,15 +153,22 @@ public class RealmInteractor {
     }
 
     public List<Movie> getFirstMovie(long categoryId, Boolean haveSeen){
-        Movie movie = getMovies(null, categoryId, haveSeen).first();
-        return getLikeSearchResultByMovieName(movie);
+        RealmResults<Movie> movieRealmResults = getMovies(null, categoryId, haveSeen).sort("registDt");
+        if(!movieRealmResults.isEmpty()){
+            Movie movie = movieRealmResults.first();
+            return getLikeSearchResultByMovieName(movie);
+        }
+        return null;
     }
 
     public List<Movie> getRandomMovie(long categoryId, Boolean haveSeen){
         Random random = new Random();
         RealmResults<Movie> movieRealmResults = getMovies(null, categoryId, haveSeen);
-        Movie movie = movieRealmResults.get(random.nextInt(movieRealmResults.size()));
-        return getLikeSearchResultByMovieName(movie);
+        if(!movieRealmResults.isEmpty()){
+            Movie movie = movieRealmResults.get(random.nextInt(movieRealmResults.size()));
+            return getLikeSearchResultByMovieName(movie);
+        }
+        return null;
     }
 
     private List<Movie> getLikeSearchResultByMovieName(Movie movie){

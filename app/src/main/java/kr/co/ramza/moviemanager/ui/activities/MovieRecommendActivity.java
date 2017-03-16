@@ -101,7 +101,7 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
     @Override
     protected void onResume() {
         super.onResume();
-
+        recommendMovieListAdapter.checkValidList();
         recommendMovieListAdapter.notifyDataSetChanged();
     }
 
