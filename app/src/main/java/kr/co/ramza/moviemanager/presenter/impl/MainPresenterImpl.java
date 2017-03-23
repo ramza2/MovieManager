@@ -153,45 +153,48 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
             }
             return Observable.just(saveSuccess);
         })
-                .filter(success->success)
                 .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnCompleted(() -> {
-                    mainView.showStatus(R.string.complete_file_save);
-                });
+                .observeOn(AndroidSchedulers.mainThread());
 
         File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> categoryObservable = firebaseInteractor.backup(Conts.CATEGORY_FILE_NAME, categoryFile)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(taskSnapshot -> {
-                    mainView.showStatus(R.string.category_saved_to_cloud);
-                });
+                .doOnNext(taskSnapshot -> mainView.showStatus(R.string.category_saved_to_cloud));
         File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> movieObservable = firebaseInteractor.backup(Conts.MOVIE_FILE_NAME, movieFile)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(taskSnapshot -> {
-                    mainView.showStatus(R.string.video_saved_to_cloud);
-                });
+                .doOnNext(taskSnapshot -> mainView.showStatus(R.string.video_saved_to_cloud));
         File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
         Observable<UploadTask.TaskSnapshot> logObservable = firebaseInteractor.backup(Conts.LOG_FILE_NAME, logFile)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(taskSnapshot -> {
-                    mainView.showStatus(R.string.log_saved_to_cloud);
-                });
+                .doOnNext(taskSnapshot -> mainView.showStatus(R.string.log_saved_to_cloud));
 
         Observable cloudObservable = Observable.combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
 
-        fileObservable.flatMap(success -> cloudObservable)
+        fileObservable
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .map(success -> {
+                    if(!success){
+                        mainView.showToast(R.string.backup_failed);
+                        mainView.dismissProgressDialog();
+                    }else{
+                        mainView.showStatus(R.string.complete_file_save);
+                    }
+                   return success;
+                })
+                .subscribeOn(Schedulers.io())
+                .filter(success -> success)
+                .flatMap(success -> cloudObservable)
                 .doOnSubscribe(()->{
                     mainView.showStatus(R.string.start_backup);
                     mainView.showProgressDialog();
                 })
                 .doOnNext((o) -> {
-                    mainView.showStatus(R.string.backup_complete);
+                    mainView.showToast(R.string.backup_complete);
                     mainView.dismissProgressDialog();
                 })
                 .doOnError(throwable -> {
-                    mainView.showStatus(R.string.backup_failed);
+                    mainView.showToast(R.string.backup_failed);
                     mainView.dismissProgressDialog();
                 })
                 .subscribe();
