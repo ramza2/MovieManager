@@ -21,4 +21,5 @@ public interface MainPresenter {
     void clearData();
     void backup();
     void restore();
+    void release();
 }

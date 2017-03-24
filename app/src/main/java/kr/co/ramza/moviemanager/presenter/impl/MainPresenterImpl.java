@@ -30,6 +30,7 @@ import kr.co.ramza.moviemanager.variable.Conts;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 import static rx.Observable.combineLatest;
 
@@ -48,6 +49,8 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
     private FirebaseAuthInteractor firebaseAuthInteractor;
 
     private FirebaseAuth.AuthStateListener authListener;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Inject
     public MainPresenterImpl(RealmInteractor realmInteractor, FirebaseInteractor firebaseInteractor, FirebaseAuthInteractor firebaseAuthInteractor) {
@@ -171,7 +174,7 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
 
         Observable cloudObservable = Observable.combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
 
-        fileObservable
+        subscriptions.add(fileObservable
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .map(success -> {
                     if(!success){
@@ -197,7 +200,7 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                     mainView.showToast(R.string.backup_failed);
                     mainView.dismissProgressDialog();
                 })
-                .subscribe();
+                .subscribe());
     }
 
     @Override
@@ -242,7 +245,7 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
 
         Observable cloudObservable = combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
 
-        cloudObservable.flatMap(o -> fileObservable)
+        subscriptions.add(cloudObservable.flatMap(o -> fileObservable)
                 .doOnSubscribe(()->{
                     mainView.showStatus(R.string.start_restore);
                     mainView.showProgressDialog();
@@ -251,7 +254,12 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                     mainView.showStatus(R.string.restoration_complete);
                     mainView.dismissProgressDialog();
                 })
-                .subscribe();
+                .subscribe());
+    }
+
+    @Override
+    public void release() {
+        subscriptions.unsubscribe();
     }
 
     @Override

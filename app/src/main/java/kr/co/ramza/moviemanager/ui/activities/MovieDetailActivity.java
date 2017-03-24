@@ -26,6 +26,7 @@ import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.presenter.MovieDetailPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.view.MovieDetailView;
+import rx.subscriptions.CompositeSubscription;
 
 public class MovieDetailActivity extends BaseActivity implements MovieDetailView{
 
@@ -52,6 +53,8 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
 
     @Inject
     CategorySpinnerAdapter categorySpinnerAdapter;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Override
     protected int getContentViewResource() {
@@ -80,18 +83,18 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
 
         categorySpinner.setAdapter(categorySpinnerAdapter);
 
-        RxView.clicks(modifyBtn)
+        subscriptions.add(RxView.clicks(modifyBtn)
                 .subscribe(event->{
                     movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString(),
                             (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
                     finish();
-                });
+                }));
 
-        RxView.clicks(deleteBtn)
+        subscriptions.add(RxView.clicks(deleteBtn)
                 .subscribe(event->{
                     movieDetailPresenter.deleteMovie();
                     finish();
-                });
+                }));
 
         long id = getIntent().getLongExtra(EXTRA_ID, 0);
         movieDetailPresenter.loadMovie(id);
@@ -119,5 +122,12 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
         Intent intent = new Intent(context, MovieDetailActivity.class);
         intent.putExtra(EXTRA_ID, id);
         return intent;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        subscriptions.unsubscribe();
     }
 }

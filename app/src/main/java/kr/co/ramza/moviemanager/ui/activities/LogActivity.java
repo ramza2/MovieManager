@@ -24,6 +24,7 @@ import kr.co.ramza.moviemanager.presenter.LogPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.LogListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.LogView;
+import rx.subscriptions.CompositeSubscription;
 
 public class LogActivity extends BaseActivity implements LogView{
 
@@ -40,6 +41,8 @@ public class LogActivity extends BaseActivity implements LogView{
     Button initLogBtn;
 
     private ItemTouchHelper itemTouchHelper;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Override
     protected int getContentViewResource() {
@@ -80,11 +83,11 @@ public class LogActivity extends BaseActivity implements LogView{
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        RxView.clicks(initLogBtn)
+        subscriptions.add(RxView.clicks(initLogBtn)
                 .subscribe(event->{
                     logPresenter.clearLogs();
                     logListAdapter.notifyDataSetChanged();
-                });
+                }));
 
         logPresenter.loadLogs();
     }
@@ -106,4 +109,10 @@ public class LogActivity extends BaseActivity implements LogView{
         return new Intent(context, LogActivity.class);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        subscriptions.unsubscribe();
+    }
 }

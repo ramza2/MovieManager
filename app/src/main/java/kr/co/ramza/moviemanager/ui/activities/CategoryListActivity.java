@@ -27,6 +27,7 @@ import kr.co.ramza.moviemanager.presenter.CategoryListPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategoryListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.CategoryListView;
+import rx.subscriptions.CompositeSubscription;
 
 public class CategoryListActivity extends BaseActivity implements CategoryListView{
 
@@ -46,6 +47,8 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
     CategoryListAdapter categoryListAdapter;
 
     private ItemTouchHelper itemTouchHelper;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Override
     protected int getContentViewResource() {
@@ -87,13 +90,13 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
         itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        RxView.clicks(addCategoryBtn)
+        subscriptions.add(RxView.clicks(addCategoryBtn)
                 .map((v)->categoryNameEditText.getText().toString())
                 .filter(categoryName->!categoryName.equals(""))
                 .subscribe(categoryName->{
                     categoryListPresenter.addCategory(categoryName);
                     categoryNameEditText.setText(null);
-                });
+                }));
 
         categoryListPresenter.loadCategoryList();
     }
@@ -111,5 +114,13 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
 
     public static Intent getIntent(Context context){
         return new Intent(context, CategoryListActivity.class);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        categoryListPresenter.release();
+        subscriptions.unsubscribe();
     }
 }

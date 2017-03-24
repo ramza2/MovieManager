@@ -28,6 +28,7 @@ import kr.co.ramza.moviemanager.presenter.MovieRecommendPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.adapter.RecommendMovieListAdapter;
 import kr.co.ramza.moviemanager.ui.view.MovieRecommendView;
+import rx.subscriptions.CompositeSubscription;
 
 public class MovieRecommendActivity extends BaseActivity implements MovieRecommendView {
 
@@ -48,9 +49,10 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
     @Inject
     RecommendMovieListAdapter recommendMovieListAdapter;
 
-
     @Inject
     CategorySpinnerAdapter categorySpinnerAdapter;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Override
     protected int getContentViewResource() {
@@ -93,9 +95,9 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
         String[] searchType = {getString(R.string.mix),getString(R.string.sequence), getString(R.string.random)};
         searchTypeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, searchType));
 
-        RxView.clicks(recommendBtn)
+        subscriptions.add(RxView.clicks(recommendBtn)
                 .subscribe(event-> movieRecommendPresenter.startRecommend((Category) categorySpinner.getSelectedItem(),
-                        haveSeenCheckBox.isChecked(), searchTypeSpinner.getSelectedItemPosition()));
+                        haveSeenCheckBox.isChecked(), searchTypeSpinner.getSelectedItemPosition())));
     }
 
     @Override
@@ -113,5 +115,12 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
 
     public static Intent getIntent(Context context){
         return new Intent(context, MovieRecommendActivity.class);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        subscriptions.unsubscribe();
     }
 }

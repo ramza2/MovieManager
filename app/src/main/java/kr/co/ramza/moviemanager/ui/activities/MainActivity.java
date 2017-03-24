@@ -32,6 +32,7 @@ import kr.co.ramza.moviemanager.presenter.MainPresenter;
 import kr.co.ramza.moviemanager.ui.view.MainView;
 import rx.Observable;
 import rx.Subscriber;
+import rx.subscriptions.CompositeSubscription;
 import rx.subscriptions.Subscriptions;
 
 public class MainActivity extends BaseActivity implements MainView {
@@ -62,6 +63,8 @@ public class MainActivity extends BaseActivity implements MainView {
     MainPresenter mainPresenter;
 
     ProgressDialog asyncDialog = null;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Override
     protected int getContentViewResource() {
@@ -95,22 +98,22 @@ public class MainActivity extends BaseActivity implements MainView {
 
         signInButton.setSize(SignInButton.SIZE_STANDARD);
 
-        RxView.clicks(clearDataBtn)
+        subscriptions.add(RxView.clicks(clearDataBtn)
                 .flatMap(x->dialog(this, R.string.init, R.string.question_init))
                 .filter(x-> x == true)
-                .subscribe(event->mainPresenter.clearData());
+                .subscribe(event->mainPresenter.clearData()));
 
-        RxView.clicks(backupBtn)
+        subscriptions.add(RxView.clicks(backupBtn)
                 .flatMap(x->dialog(this, R.string.backup, R.string.question_backup))
                 .filter(x-> x == true)
                 .subscribe(event -> {
                     mainPresenter.backup();
-                });
+                }));
 
-        RxView.clicks(restoreBtn)
+        subscriptions.add(RxView.clicks(restoreBtn)
                 .flatMap(x->dialog(this, R.string.restore, R.string.question_restore))
                 .filter(x-> x == true)
-                .subscribe(event-> mainPresenter.restore());
+                .subscribe(event-> mainPresenter.restore()));
     }
 
     Observable<Boolean> dialog(Context context,@StringRes int title,@StringRes int message) {
@@ -225,5 +228,13 @@ public class MainActivity extends BaseActivity implements MainView {
             signInButton.setVisibility(View.VISIBLE);
             sign_out_and_disconnect.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        mainPresenter.release();
+        subscriptions.unsubscribe();
     }
 }

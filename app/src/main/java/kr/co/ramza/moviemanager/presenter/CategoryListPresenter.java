@@ -12,4 +12,5 @@ public interface CategoryListPresenter {
     void setView(CategoryListView categoryListView);
     void loadCategoryList();
     void addCategory(String categoryName);
+    void release();
 }

@@ -34,6 +34,7 @@ import kr.co.ramza.moviemanager.ui.adapter.MovieListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.MovieListView;
 import rx.Observable;
+import rx.subscriptions.CompositeSubscription;
 
 public class MovieListActivity extends BaseActivity implements MovieListView{
 
@@ -65,6 +66,8 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     CategorySpinnerAdapter categorySpinnerAdapter;
 
     private ItemTouchHelper itemTouchHelper;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Override
     protected int getContentViewResource() {
@@ -107,16 +110,16 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
 
         categorySpinnerAdapter.addTotalData(getString(R.string.all));
         categorySpinner.setAdapter(categorySpinnerAdapter);
-        RxAdapterView.selectionEvents(categorySpinner)
-                .subscribe(event->movieListPresenter.loadMovieList());
+        subscriptions.add(RxAdapterView.selectionEvents(categorySpinner)
+                .subscribe(event->movieListPresenter.loadMovieList()));
 
-        RxTextView.textChangeEvents(movieNameEditText)
-                .subscribe(event->movieListPresenter.loadMovieList());
+        subscriptions.add(RxTextView.textChangeEvents(movieNameEditText)
+                .subscribe(event->movieListPresenter.loadMovieList()));
 
         String[] hasSeen = {getString(R.string.all), getString(R.string.not_have_seen), getString(R.string.have_seen)};
         haveSeenSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, hasSeen));
-        RxAdapterView.selectionEvents(haveSeenSpinner)
-                .subscribe(event->movieListPresenter.loadMovieList());
+        subscriptions.add(RxAdapterView.selectionEvents(haveSeenSpinner)
+                .subscribe(event->movieListPresenter.loadMovieList()));
 
         Observable<Category> categoryObservable =
                 Observable.create((Observable.OnSubscribe<Category>) subscriber -> subscriber.onNext((Category) categorySpinner.getSelectedItem()))
@@ -137,13 +140,13 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                             return true;
                         });
 
-        RxView.clicks(addMovieBtn)
+        subscriptions.add(RxView.clicks(addMovieBtn)
                 .flatMap(event -> Observable.zip(categoryObservable, movieNameObservable, (category, name) -> new Movie(category, name)))
                 .subscribe(movie -> {
                     movieListPresenter.addMovie(movie);
                     movieNameEditText.setText(null);
                     Toast.makeText(MovieListActivity.this, R.string.video_added, Toast.LENGTH_SHORT).show();
-                });
+                }));
 
         movieListPresenter.loadMovieList();
     }
@@ -189,5 +192,12 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
         movieListAdapter.setMovieRealmResults(movieRealmResults);
         movieListAdapter.notifyDataSetChanged();
         searchCountTextView.setText(String.valueOf(movieRealmResults.size()));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        subscriptions.unsubscribe();
     }
 }

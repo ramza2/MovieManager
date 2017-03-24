@@ -8,6 +8,7 @@ import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.presenter.CategoryListPresenter;
 import kr.co.ramza.moviemanager.ui.view.CategoryListView;
 import rx.Observable;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by 전창현 on 2017-02-28.
@@ -20,6 +21,8 @@ public class CategoryListPresenterImpl implements CategoryListPresenter {
     private final RealmInteractor realmInteractor;
 
     private CategoryListView categoryListView;
+
+    private CompositeSubscription subscriptions = new CompositeSubscription();
 
     @Inject
     public CategoryListPresenterImpl(RealmInteractor realmInteractor) {
@@ -41,6 +44,13 @@ public class CategoryListPresenterImpl implements CategoryListPresenter {
         Category category = new Category();
         category.setName(categoryName.trim());
         Observable<Category> categoryObservable = realmInteractor.addCategory(category);
-        categoryObservable.subscribe(categoryResult ->loadCategoryList(), throwable -> this.categoryListView.showToast(R.string.failed_category_registration));
+        subscriptions.add(categoryObservable.subscribe(
+                categoryResult ->loadCategoryList(),
+                throwable -> this.categoryListView.showToast(R.string.failed_category_registration)));
+    }
+
+    @Override
+    public void release() {
+        subscriptions.unsubscribe();
     }
 }
