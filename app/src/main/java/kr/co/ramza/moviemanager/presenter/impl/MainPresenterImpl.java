@@ -192,15 +192,14 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                     mainView.showStatus(R.string.start_backup);
                     mainView.showProgressDialog();
                 })
-                .doOnNext((o) -> {
-                    mainView.showToast(R.string.backup_complete);
-                    mainView.dismissProgressDialog();
-                })
                 .doOnError(throwable -> {
                     mainView.showToast(R.string.backup_failed);
                     mainView.dismissProgressDialog();
                 })
-                .subscribe());
+                .subscribe(o -> {
+                    mainView.showToast(R.string.backup_complete);
+                    mainView.dismissProgressDialog();
+                }));
     }
 
     @Override
