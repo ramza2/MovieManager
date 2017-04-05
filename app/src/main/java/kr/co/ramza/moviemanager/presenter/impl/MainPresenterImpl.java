@@ -14,6 +14,7 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -172,7 +173,14 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(taskSnapshot -> mainView.showStatus(R.string.log_saved_to_cloud));
 
-        Observable cloudObservable = Observable.combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null);
+        Observable cloudObservable = Observable.combineLatest(categoryObservable, movieObservable, logObservable, (taskSnapshot, taskSnapshot2, taskSnapshot3) -> null)
+                .delay(1000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(o -> {
+                    mainView.showToast(R.string.backup_complete);
+                    mainView.dismissProgressDialog();
+                   return null;
+                });
 
         subscriptions.add(fileObservable
                 .subscribeOn(AndroidSchedulers.mainThread())
@@ -196,10 +204,7 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                     mainView.showToast(R.string.backup_failed);
                     mainView.dismissProgressDialog();
                 })
-                .subscribe(o -> {
-                    mainView.showToast(R.string.backup_complete);
-                    mainView.dismissProgressDialog();
-                }));
+                .subscribe());
     }
 
     @Override
