@@ -95,6 +95,7 @@ public class MainActivity extends BaseActivity implements MainView {
         asyncDialog = new ProgressDialog(this);
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         asyncDialog.setMessage(getString(R.string.authorizing));
+        asyncDialog.setCancelable(false);
 
         signInButton.setSize(SignInButton.SIZE_STANDARD);
 
