@@ -116,7 +116,7 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         // [START_EXCLUDE silent]
         mainView.showStatus(R.string.authorizing);
-        mainView.showProgressDialog();
+        mainView.showAuthProgressDialog();
         // [END_EXCLUDE]
 
         firebaseAuthInteractor.signInWithCredential(acct, task -> {
@@ -128,7 +128,7 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                 mainView.showToast(R.string.authentication_failed);
             }
             // [START_EXCLUDE]
-            mainView.dismissProgressDialog();
+            mainView.dismissAuthProgressDialog();
             // [END_EXCLUDE]
         });
     }

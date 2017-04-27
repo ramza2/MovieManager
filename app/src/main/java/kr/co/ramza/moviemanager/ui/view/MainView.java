@@ -14,6 +14,8 @@ import java.io.File;
 
 public interface MainView {
     File getFile(String fileName);
+    void showAuthProgressDialog();
+    void dismissAuthProgressDialog();
     void showStatus(@StringRes int stingRes);
     void showProgressDialog();
     void showToast(@StringRes int stringRes);

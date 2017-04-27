@@ -62,6 +62,7 @@ public class MainActivity extends BaseActivity implements MainView {
     @Inject
     MainPresenter mainPresenter;
 
+    ProgressDialog authDialog = null;
     ProgressDialog asyncDialog = null;
 
     private CompositeSubscription subscriptions = new CompositeSubscription();
@@ -92,9 +93,13 @@ public class MainActivity extends BaseActivity implements MainView {
 
         mainPresenter.setView(this);
 
+        authDialog = new ProgressDialog(this);
+        authDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        authDialog.setMessage(getString(R.string.authorizing));
+        authDialog.setCancelable(false);
+
         asyncDialog = new ProgressDialog(this);
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        asyncDialog.setMessage(getString(R.string.authorizing));
         asyncDialog.setCancelable(false);
 
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -194,6 +199,16 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
+    public void showAuthProgressDialog() {
+        authDialog.show();
+    }
+
+    @Override
+    public void dismissAuthProgressDialog() {
+        if(authDialog != null && authDialog.isShowing()) authDialog.dismiss();
+    }
+
+    @Override
     public void showStatus(@StringRes int stingRes) {
         asyncDialog.setMessage(getString(stingRes));
     }
@@ -215,7 +230,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void updateUI(FirebaseUser user) {
-        dismissProgressDialog();
+        dismissAuthProgressDialog();
         if (user != null) {
             statusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
 
