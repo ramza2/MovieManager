@@ -7,7 +7,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 
@@ -25,6 +24,7 @@ import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.presenter.MovieDetailPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
+import kr.co.ramza.moviemanager.ui.view.ClearEditText;
 import kr.co.ramza.moviemanager.ui.view.MovieDetailView;
 import rx.subscriptions.CompositeSubscription;
 
@@ -39,7 +39,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     Spinner categorySpinner;
 
     @BindView(R.id.movieNameEditText)
-    EditText movieNameEditText;
+    ClearEditText movieNameEditText;
 
     @BindView(R.id.haveSeenCheckBox)
     CheckBox haveSeenCheckBox;

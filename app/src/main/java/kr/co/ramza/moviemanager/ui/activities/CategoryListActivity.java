@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.jakewharton.rxbinding.view.RxView;
@@ -27,6 +26,7 @@ import kr.co.ramza.moviemanager.presenter.CategoryListPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategoryListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
 import kr.co.ramza.moviemanager.ui.view.CategoryListView;
+import kr.co.ramza.moviemanager.ui.view.ClearEditText;
 import rx.subscriptions.CompositeSubscription;
 
 public class CategoryListActivity extends BaseActivity implements CategoryListView{
@@ -35,7 +35,7 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
     RecyclerView recyclerView;
 
     @BindView(R.id.categoryNameEditText)
-    EditText categoryNameEditText;
+    ClearEditText categoryNameEditText;
 
     @BindView(R.id.addCategoryBtn)
     Button addCategoryBtn;

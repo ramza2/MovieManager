@@ -10,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="kr.co.ramza.moviemanager.ui.activities.MovieListActivity">
-    <EditText
+    <kr.co.ramza.moviemanager.ui.view.ClearEditText
         android:id="@+id/movieNameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

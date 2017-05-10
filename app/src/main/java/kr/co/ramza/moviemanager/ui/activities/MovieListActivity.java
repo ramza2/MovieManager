@@ -10,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +31,7 @@ import kr.co.ramza.moviemanager.presenter.MovieListPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategorySpinnerAdapter;
 import kr.co.ramza.moviemanager.ui.adapter.MovieListAdapter;
 import kr.co.ramza.moviemanager.ui.helper.SimpleItemTouchHelperCallback;
+import kr.co.ramza.moviemanager.ui.view.ClearEditText;
 import kr.co.ramza.moviemanager.ui.view.MovieListView;
 import rx.Observable;
 import rx.subscriptions.CompositeSubscription;
@@ -51,7 +51,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     Spinner haveSeenSpinner;
 
     @BindView(R.id.movieNameEditText)
-    EditText movieNameEditText;
+    ClearEditText movieNameEditText;
 
     @BindView(R.id.searchCountTextView)
     TextView searchCountTextView;
@@ -144,6 +144,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                 .flatMap(event -> Observable.zip(categoryObservable, movieNameObservable, (category, name) -> new Movie(category, name)))
                 .subscribe(movie -> {
                     movieListPresenter.addMovie(movie);
+                    movieListAdapter.notifyDataSetChanged();
                     Toast.makeText(MovieListActivity.this, R.string.video_added, Toast.LENGTH_SHORT).show();
                 }));
 
