@@ -144,7 +144,6 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                 .flatMap(event -> Observable.zip(categoryObservable, movieNameObservable, (category, name) -> new Movie(category, name)))
                 .subscribe(movie -> {
                     movieListPresenter.addMovie(movie);
-                    movieNameEditText.setText(null);
                     Toast.makeText(MovieListActivity.this, R.string.video_added, Toast.LENGTH_SHORT).show();
                 }));
 
