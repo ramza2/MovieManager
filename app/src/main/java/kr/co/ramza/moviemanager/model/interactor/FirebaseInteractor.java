@@ -30,7 +30,7 @@ public class FirebaseInteractor {
     }
 
     public Observable<UploadTask.TaskSnapshot> backup(String fileName , File file){
-        Observable<UploadTask.TaskSnapshot> observable = null;
+        Observable<UploadTask.TaskSnapshot> observable = Observable.just(null);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             StorageReference fileRef = storageRef.child(user.getUid()).child(fileName);

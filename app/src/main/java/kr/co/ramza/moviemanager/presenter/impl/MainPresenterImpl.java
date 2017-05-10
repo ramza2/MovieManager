@@ -144,16 +144,19 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
     public void backup() {
         Observable<Boolean> fileObservable = Observable.defer(()->{
             boolean saveSuccess = false;
-            try {
-                File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
-                realmInteractor.backup(realmInteractor.getAllCategories(), categoryFile);
-                File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
-                realmInteractor.backup(realmInteractor.getAllMovies(), movieFile);
-                File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
-                realmInteractor.backup(realmInteractor.getAllLogs(), logFile);
-                saveSuccess = true;
-            } catch (Exception e) {
-                e.printStackTrace();
+
+            if(realmInteractor.getAllCategories().size() > 0 && realmInteractor.getAllMovies().size() > 0){
+                try {
+                    File categoryFile = mainView.getFile(Conts.CATEGORY_FILE_NAME);
+                    realmInteractor.backup(realmInteractor.getAllCategories(), categoryFile);
+                    File movieFile = mainView.getFile(Conts.MOVIE_FILE_NAME);
+                    realmInteractor.backup(realmInteractor.getAllMovies(), movieFile);
+                    File logFile = mainView.getFile(Conts.LOG_FILE_NAME);
+                    realmInteractor.backup(realmInteractor.getAllLogs(), logFile);
+                    saveSuccess = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             return Observable.just(saveSuccess);
         })
