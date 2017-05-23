@@ -186,7 +186,6 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                 });
 
         subscriptions.add(fileObservable
-                .subscribeOn(AndroidSchedulers.mainThread())
                 .map(success -> {
                     if(!success){
                         mainView.showToast(R.string.backup_failed);
@@ -196,7 +195,6 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                     }
                    return success;
                 })
-                .subscribeOn(Schedulers.io())
                 .filter(success -> success)
                 .flatMap(success -> cloudObservable)
                 .doOnSubscribe(()->{
