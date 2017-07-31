@@ -164,7 +164,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
 
     @Override
     public String getName() {
-        return movieNameEditText.getText().toString();
+        return movieNameEditText.getText().toString().trim();
     }
 
     @Override
