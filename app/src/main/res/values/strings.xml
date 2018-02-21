@@ -55,4 +55,5 @@
     <string name="add_log_success">Log added successfully</string>
     <string name="add_log_fail">Failed to add log</string>
     <string name="detail_view">View detail</string>
+    <string name="no_data_to_restore">No data to restore.</string>
 </resources>

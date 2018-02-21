@@ -258,8 +258,10 @@ public class MainPresenterImpl implements MainPresenter, GoogleApiClient.OnConne
                 .doOnNext((o) -> {
                     mainView.showStatus(R.string.restoration_complete);
                     mainView.dismissProgressDialog();
-                })
-                .subscribe());
+                }).subscribe(o -> {},throwable -> {
+                    mainView.showToast(R.string.no_data_to_restore);
+                    mainView.dismissProgressDialog();
+                }));
     }
 
     @Override
