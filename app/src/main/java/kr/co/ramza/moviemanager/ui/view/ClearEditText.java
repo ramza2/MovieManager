@@ -50,7 +50,7 @@ public class ClearEditText extends AppCompatEditText implements TextWatcher, Vie
 
     private void init() {
 
-        Drawable tempDrawable = ContextCompat.getDrawable(getContext(), android.support.v7.appcompat.R.drawable.abc_ic_clear_material);
+        Drawable tempDrawable = ContextCompat.getDrawable(getContext(), android.R.drawable.ic_delete);
         clearDrawable = DrawableCompat.wrap(tempDrawable);
         DrawableCompat.setTintList(clearDrawable,getHintTextColors());
         clearDrawable.setBounds(0, 0, clearDrawable.getIntrinsicWidth(), clearDrawable.getIntrinsicHeight());
