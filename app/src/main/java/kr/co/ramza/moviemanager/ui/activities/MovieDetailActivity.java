@@ -126,14 +126,12 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
         return intent;
     }
 
-    private void modifyMovie(){
-    }
-
     @Override
-    protected void onPause() {
-        super.onPause();
+    public void onBackPressed() {
         movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString().trim(), seriesEditText.getText().toString().trim(),
                 (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
+
+        super.onBackPressed();
     }
 
     @Override
