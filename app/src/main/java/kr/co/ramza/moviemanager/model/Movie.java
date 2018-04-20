@@ -18,6 +18,7 @@ public class Movie extends RealmObject {
     private Category category;
     @Required
     private String name;
+    private String series;
     private boolean haveSeen;
     private float starNum;
     private Date registDt;
@@ -26,9 +27,10 @@ public class Movie extends RealmObject {
     public Movie() {
     }
 
-    public Movie(Category category, String name) {
+    public Movie(Category category, String name, String series) {
         this.category = category;
         this.name = name;
+        this.series = series;
     }
 
     public Category getCategory() {
@@ -69,6 +71,14 @@ public class Movie extends RealmObject {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSeries() {
+        return series;
+    }
+
+    public void setSeries(String series) {
+        this.series = series;
     }
 
     public Date getRegistDt() {

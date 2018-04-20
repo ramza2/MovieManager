@@ -1,6 +1,7 @@
 package kr.co.ramza.moviemanager.model.interactor;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,9 +22,14 @@ import java.util.List;
 import java.util.Random;
 
 import io.realm.Case;
+import io.realm.DynamicRealm;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
+import io.realm.RealmMigration;
+import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import io.realm.RealmSchema;
 import io.realm.Sort;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
@@ -38,7 +44,19 @@ import rx.Observable;
 public class RealmInteractor {
 
     public RealmInteractor(Context context) {
+        RealmMigration migration = (realm, oldVersion, newVersion) -> {
+            RealmSchema schema = realm.getSchema();
+
+            if(oldVersion == 0){
+                schema.get("Movie")
+                        .addField("series", String.class);
+            }
+        };
         Realm.init(context);
+        Realm.setDefaultConfiguration(new RealmConfiguration.Builder()
+                .schemaVersion(1)
+                .migration(migration)
+                .build());
     }
 
     public Observable<Category> addCategory(Category newCategory){
@@ -130,12 +148,40 @@ public class RealmInteractor {
         return realm.where(Movie.class).findAll();
     }
 
-    public RealmResults<Movie> getMovies(String name, long categoryId, Boolean haveSeen){
+    public RealmResults<Movie> getMovies(String name, String series, long categoryId, Boolean haveSeen){
         Realm realm = Realm.getDefaultInstance();
         RealmQuery<Movie> movieRealmQuery = realm.where(Movie.class);
-        if(name != null && !name.equals("")){
+        if(!TextUtils.isEmpty(name)){
             movieRealmQuery = movieRealmQuery.like("name", "*"+name+"*", Case.INSENSITIVE);
         }
+
+        if(!TextUtils.isEmpty(series)){
+            movieRealmQuery = movieRealmQuery.like("series", "*"+series+"*", Case.INSENSITIVE);
+        }
+
+        if(categoryId > 0){
+            movieRealmQuery = movieRealmQuery.equalTo("category.id", categoryId);
+        }
+
+        if(haveSeen != null){
+            movieRealmQuery = movieRealmQuery.equalTo("haveSeen", haveSeen);
+        }
+
+        return movieRealmQuery.findAll();
+    }
+
+
+    public RealmResults<Movie> getMoviesExactly(String name, String series, long categoryId, Boolean haveSeen){
+        Realm realm = Realm.getDefaultInstance();
+        RealmQuery<Movie> movieRealmQuery = realm.where(Movie.class);
+        if(!TextUtils.isEmpty(name)){
+            movieRealmQuery = movieRealmQuery.equalTo("name", name, Case.INSENSITIVE);
+        }
+
+        if(!TextUtils.isEmpty(series)){
+            movieRealmQuery = movieRealmQuery.equalTo("series", series, Case.INSENSITIVE);
+        }
+
         if(categoryId > 0){
             movieRealmQuery = movieRealmQuery.equalTo("category.id", categoryId);
         }
@@ -152,58 +198,48 @@ public class RealmInteractor {
         return realm.where(Movie.class).equalTo("id", movieId).findFirst();
     }
 
+    public Movie getCopyiedMovie(Movie movie){
+        Realm realm = Realm.getDefaultInstance();
+        return realm.copyFromRealm(movie);
+    }
+
     public List<Movie> getFirstMovie(long categoryId, Boolean haveSeen){
-        RealmResults<Movie> movieRealmResults = getMovies(null, categoryId, haveSeen).sort("registDt");
+        RealmResults<Movie> movieRealmResults = getMovies(null, null, categoryId, haveSeen).sort("registDt");
         if(!movieRealmResults.isEmpty()){
             Movie movie = movieRealmResults.first();
-            return getLikeSearchResultByMovieName(movie);
+            return getLikeSearchResultBySeries(movie);
         }
         return null;
     }
 
     public List<Movie> getRandomMovie(long categoryId, Boolean haveSeen){
         Random random = new Random();
-        RealmResults<Movie> movieRealmResults = getMovies(null, categoryId, haveSeen);
+        RealmResults<Movie> movieRealmResults = getMovies(null, null, categoryId, haveSeen);
         if(!movieRealmResults.isEmpty()){
             Movie movie = movieRealmResults.get(random.nextInt(movieRealmResults.size()));
-            return getLikeSearchResultByMovieName(movie);
+            return getLikeSearchResultBySeries(movie);
         }
         return null;
     }
 
-    private List<Movie> getLikeSearchResultByMovieName(Movie movie){
-        String movieName = movie.getName();
-        String searchMovieName = substringMovieName(movieName, "&");
-        searchMovieName = substringMovieName(searchMovieName, ":");
-        String[] movieNameSplit = searchMovieName.split(" ");
-
-        String likeSearchName = "";
-        if(movieNameSplit.length > 1){
-            for (int i = 0; i < movieNameSplit.length - 1; i++) {
-                likeSearchName += " " + movieNameSplit[i];
-            }
-        }else{
-            likeSearchName = movieNameSplit[0];
-        }
-        likeSearchName = likeSearchName.trim();
-
-        RealmResults<Movie> likeSearchResult = getMovies(likeSearchName, movie.getCategory().getId(), movie.isHaveSeen())
-                .where().beginsWith("name", likeSearchName, Case.INSENSITIVE).notEqualTo("name", movieName).findAll();
-        List<Movie> movieList = new ArrayList<>(likeSearchResult);
+    private List<Movie> getLikeSearchResultBySeries(Movie movie){
+        List<Movie> movieList = new ArrayList<>();
         movieList.add(0, movie);
+
+        String series = movie.getSeries();
+
+        if(!TextUtils.isEmpty(series)){
+            RealmResults<Movie> likeSearchResult = getMoviesExactly(null, series, movie.getCategory().getId(), movie.isHaveSeen());
+            movieList.addAll(likeSearchResult);
+        }
         return movieList;
     }
 
-    private String substringMovieName(String movieName, String ch){
-        int lastIndex = movieName.indexOf(ch);
-        if(lastIndex != -1) movieName = movieName.substring(0, lastIndex);
-        return movieName;
-    }
-
-    public void modifyMovieInfo(Movie movie, String name, Category category, boolean haveSeen, float starNum){
+    public void modifyMovieInfo(Movie movie, String name, String series, Category category, boolean haveSeen, float starNum){
         Realm realm = Realm.getDefaultInstance();
         realm.beginTransaction();
         movie.setName(name);
+        movie.setSeries(series);
         movie.setCategory(category);
         movie.setHaveSeen(haveSeen);
         movie.setStarNum(starNum);

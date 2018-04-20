@@ -12,6 +12,7 @@ import kr.co.ramza.moviemanager.ui.view.MovieDetailView;
 public interface MovieDetailPresenter {
     void setView(MovieDetailView movieDetailView);
     void loadMovie(long Id);
-    void modifyMovie(String name, Category category, boolean haveSeen, float starNum);
+    void loadOrgMovie();
+    void modifyMovie(String name, String series, Category category, boolean haveSeen, float starNum);
     void deleteMovie();
 }

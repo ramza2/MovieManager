@@ -15,6 +15,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/name_of_video_to_search_or_add"/>
+    <kr.co.ramza.moviemanager.ui.view.ClearEditText
+        android:id="@+id/seriesEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/hint_input_series"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

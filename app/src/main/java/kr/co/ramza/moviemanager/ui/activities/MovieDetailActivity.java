@@ -41,12 +41,15 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     @BindView(R.id.movieNameEditText)
     ClearEditText movieNameEditText;
 
+    @BindView(R.id.seriesEditText)
+    ClearEditText seriesEditText;
+
     @BindView(R.id.haveSeenCheckBox)
     CheckBox haveSeenCheckBox;
     @BindView(R.id.starNumRatingBar)
     RatingBar starNumRatingBar;
-    @BindView(R.id.modifyBtn)
-    Button modifyBtn;
+    @BindView(R.id.revertBtn)
+    Button revertBtn;
 
     @BindView(R.id.deleteBtn)
     Button deleteBtn;
@@ -83,11 +86,9 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
 
         categorySpinner.setAdapter(categorySpinnerAdapter);
 
-        subscriptions.add(RxView.clicks(modifyBtn)
+        subscriptions.add(RxView.clicks(revertBtn)
                 .subscribe(event->{
-                    movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString(),
-                            (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
-                    finish();
+                    movieDetailPresenter.loadOrgMovie();
                 }));
 
         subscriptions.add(RxView.clicks(deleteBtn)
@@ -103,6 +104,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     @Override
     public void showMovieInfo(Movie movie) {
         movieNameEditText.setText(movie.getName());
+        seriesEditText.setText(movie.getSeries());
 
         Category category = movie.getCategory();
         ArrayList<Category> categories = categorySpinnerAdapter.getCategories();
@@ -122,6 +124,16 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
         Intent intent = new Intent(context, MovieDetailActivity.class);
         intent.putExtra(EXTRA_ID, id);
         return intent;
+    }
+
+    private void modifyMovie(){
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString().trim(), seriesEditText.getText().toString().trim(),
+                (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
     }
 
     @Override

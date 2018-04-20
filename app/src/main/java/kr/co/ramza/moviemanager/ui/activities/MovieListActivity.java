@@ -53,6 +53,9 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     @BindView(R.id.movieNameEditText)
     ClearEditText movieNameEditText;
 
+    @BindView(R.id.seriesEditText)
+    ClearEditText seriesEditText;
+
     @BindView(R.id.searchCountTextView)
     TextView searchCountTextView;
 
@@ -116,6 +119,9 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
         subscriptions.add(RxTextView.textChangeEvents(movieNameEditText)
                 .subscribe(event->movieListPresenter.loadMovieList()));
 
+        subscriptions.add(RxTextView.textChangeEvents(seriesEditText)
+                .subscribe(event->movieListPresenter.loadMovieList()));
+
         String[] hasSeen = {getString(R.string.all), getString(R.string.not_have_seen), getString(R.string.have_seen)};
         haveSeenSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, hasSeen));
         subscriptions.add(RxAdapterView.selectionEvents(haveSeenSpinner)
@@ -140,8 +146,11 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                             return true;
                         });
 
+        Observable<String> seriesObservable =
+                Observable.create(subscriber -> subscriber.onNext(seriesEditText.getText().toString().trim()));
+
         subscriptions.add(RxView.clicks(addMovieBtn)
-                .flatMap(event -> Observable.zip(categoryObservable, movieNameObservable, (category, name) -> new Movie(category, name)))
+                .flatMap(event -> Observable.zip(categoryObservable, movieNameObservable, seriesObservable, (category, name, series) -> new Movie(category, name, series)))
                 .subscribe(movie -> {
                     movieListPresenter.addMovie(movie);
                     movieListAdapter.notifyDataSetChanged();
@@ -165,6 +174,11 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     @Override
     public String getName() {
         return movieNameEditText.getText().toString().trim();
+    }
+
+    @Override
+    public String getSeries() {
+        return seriesEditText.getText().toString().trim();
     }
 
     @Override

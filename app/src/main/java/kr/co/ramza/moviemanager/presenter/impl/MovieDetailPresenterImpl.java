@@ -21,6 +21,8 @@ public class MovieDetailPresenterImpl implements MovieDetailPresenter {
 
     private Movie movie;
 
+    private Movie origin;
+
     @Inject
     public MovieDetailPresenterImpl(RealmInteractor realmInteractor) {
         this.realmInteractor = realmInteractor;
@@ -34,12 +36,20 @@ public class MovieDetailPresenterImpl implements MovieDetailPresenter {
     @Override
     public void loadMovie(long id) {
         this.movie = realmInteractor.getMovie(id);
+        this.origin = realmInteractor.getCopyiedMovie(movie);
         movieDetailView.showMovieInfo(movie);
     }
 
     @Override
-    public void modifyMovie(String name, Category category, boolean haveSeen, float starNum) {
-        realmInteractor.modifyMovieInfo(this.movie, name, category, haveSeen, starNum);
+    public void loadOrgMovie() {
+        if(origin != null){
+            movieDetailView.showMovieInfo(origin);
+        }
+    }
+
+    @Override
+    public void modifyMovie(String name, String series, Category category, boolean haveSeen, float starNum) {
+        realmInteractor.modifyMovieInfo(this.movie, name, series, category, haveSeen, starNum);
     }
 
     @Override

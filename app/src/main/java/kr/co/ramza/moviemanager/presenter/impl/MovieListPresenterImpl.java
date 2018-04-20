@@ -32,9 +32,10 @@ public class MovieListPresenterImpl implements MovieListPresenter {
     @Override
     public void loadMovieList() {
         String name = movieListView.getName();
+        String series = movieListView.getSeries();
         long categoryId = movieListView.getCategoryId();
         Boolean haveSeen = movieListView.getHaveSeen();
-        movieListView.showList(realmInteractor.getMovies(name, categoryId, haveSeen));
+        movieListView.showList(realmInteractor.getMovies(name, series, categoryId, haveSeen));
     }
 
     @Override

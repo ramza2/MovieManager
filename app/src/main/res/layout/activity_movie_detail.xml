@@ -19,6 +19,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp" />
+    <kr.co.ramza.moviemanager.ui.view.ClearEditText
+        android:id="@+id/seriesEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" />
     <CheckBox
         android:id="@+id/haveSeenCheckBox"
         android:layout_width="wrap_content"
@@ -35,10 +40,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp">
         <Button
-            android:id="@+id/modifyBtn"
+            android:id="@+id/revertBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/modify"/>
+            android:text="@string/revert"/>
         <Button
             android:id="@+id/deleteBtn"
             android:layout_width="wrap_content"

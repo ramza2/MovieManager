@@ -56,4 +56,6 @@
     <string name="add_log_fail">로그 추가 실패</string>
     <string name="detail_view">상세보기</string>
     <string name="no_data_to_restore">복원할 데이터가 없습니다.</string>
+    <string name="hint_input_series">시리즈명 입력</string>
+    <string name="revert">원복</string>
 </resources>

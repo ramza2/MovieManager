@@ -56,4 +56,6 @@
     <string name="add_log_fail">Failed to add log</string>
     <string name="detail_view">View detail</string>
     <string name="no_data_to_restore">No data to restore.</string>
+    <string name="hint_input_series">Enter series name</string>
+    <string name="revert">Revert</string>
 </resources>

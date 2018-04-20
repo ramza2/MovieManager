@@ -11,6 +11,7 @@ import kr.co.ramza.moviemanager.model.Movie;
 
 public interface MovieListView {
     String getName();
+    String getSeries();
     long getCategoryId();
     Boolean getHaveSeen();
     void showList(RealmResults<Movie> movieRealmResults);
