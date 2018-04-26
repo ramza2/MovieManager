@@ -48,9 +48,11 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     CheckBox haveSeenCheckBox;
     @BindView(R.id.starNumRatingBar)
     RatingBar starNumRatingBar;
+
+    @BindView(R.id.modifyBtn)
+    Button modifyBtn;
     @BindView(R.id.revertBtn)
     Button revertBtn;
-
     @BindView(R.id.deleteBtn)
     Button deleteBtn;
 
@@ -85,6 +87,13 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
         movieDetailPresenter.setView(this);
 
         categorySpinner.setAdapter(categorySpinnerAdapter);
+
+        subscriptions.add(RxView.clicks(modifyBtn)
+                .subscribe(event->{
+                    movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString().trim(), seriesEditText.getText().toString().trim(),
+                            (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
+                    finish();
+                }));
 
         subscriptions.add(RxView.clicks(revertBtn)
                 .subscribe(event->{
@@ -124,14 +133,6 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
         Intent intent = new Intent(context, MovieDetailActivity.class);
         intent.putExtra(EXTRA_ID, id);
         return intent;
-    }
-
-    @Override
-    public void onBackPressed() {
-        movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString().trim(), seriesEditText.getText().toString().trim(),
-                (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
-
-        super.onBackPressed();
     }
 
     @Override
