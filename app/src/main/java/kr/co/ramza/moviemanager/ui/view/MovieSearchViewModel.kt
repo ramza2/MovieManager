@@ -10,6 +10,7 @@ import kr.co.ramza.moviemanager.api.SearchResponse
 import kr.co.ramza.moviemanager.model.interactor.MovieSearchInteractor
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import rx.subscriptions.CompositeSubscription
 
 
 class MovieSearchViewModel : ViewModel(){
@@ -19,6 +20,8 @@ class MovieSearchViewModel : ViewModel(){
     private var query = ""
     private var searchResult = MutableLiveData<SearchResponse>()
     private var isLoading = MutableLiveData<Boolean>()
+
+    private val subscriptions = CompositeSubscription()
 
     init {
         isLoading.value = false
@@ -32,9 +35,11 @@ class MovieSearchViewModel : ViewModel(){
         return searchResult
     }
 
+    fun getLoadingState() = isLoading
+
     fun search(){
         if(hasNext && !isLoading.value!! && query.length > 0){
-            movieSearchInteractor.doSearch(query, display, nextStart)
+            subscriptions.add(movieSearchInteractor.doSearch(query, display, nextStart)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe {
@@ -46,14 +51,21 @@ class MovieSearchViewModel : ViewModel(){
                         result ->
                         hasNext = result.total > result.start + result.display
                         nextStart = result.start + result.display
-                        searchResult.value = SearchResponse.SUCCESS(result.items)
+                        searchResult.value = SearchResponse.SUCCESS(result.total, result.items)
                     }){ error ->
                         searchResult.value = SearchResponse.FAIL(error.message?:"Error")
+                        isLoading.value = false
                     }
+            )
         }
     }
 
     companion object {
         fun create(activity: AppCompatActivity) = ViewModelProviders.of(activity).get(MovieSearchViewModel::class.java)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        subscriptions.unsubscribe()
     }
 }

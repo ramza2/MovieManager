@@ -1,12 +1,10 @@
 package kr.co.ramza.moviemanager.ui.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -30,10 +28,7 @@ import kr.co.ramza.moviemanager.di.component.MainActivityComponent;
 import kr.co.ramza.moviemanager.di.module.AuthModule;
 import kr.co.ramza.moviemanager.presenter.MainPresenter;
 import kr.co.ramza.moviemanager.ui.view.MainView;
-import rx.Observable;
-import rx.Subscriber;
 import rx.subscriptions.CompositeSubscription;
-import rx.subscriptions.Subscriptions;
 
 public class MainActivity extends BaseActivity implements MainView {
 
@@ -120,26 +115,6 @@ public class MainActivity extends BaseActivity implements MainView {
                 .flatMap(x->dialog(this, R.string.restore, R.string.question_restore))
                 .filter(x-> x == true)
                 .subscribe(event-> mainPresenter.restore()));
-    }
-
-    Observable<Boolean> dialog(Context context,@StringRes int title,@StringRes int message) {
-        return Observable.create((Subscriber<? super Boolean> subscriber) -> {
-            final AlertDialog ad = new AlertDialog.Builder(context)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        subscriber.onNext(true);
-                        subscriber.onCompleted();
-                    })
-                    .setNegativeButton(android.R.string.cancel, (dialog, which) -> {
-                        subscriber.onNext(false);
-                        subscriber.onCompleted();
-                    })
-                    .create();
-            // cleaning up
-            subscriber.add(Subscriptions.create(ad::dismiss));
-            ad.show();
-        });
     }
 
     @Override

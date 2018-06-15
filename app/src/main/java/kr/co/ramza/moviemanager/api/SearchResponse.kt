@@ -14,6 +14,6 @@ data class Item(
 data class Result(val total : Int, val start : Int, val display: Int, val items : MutableList<Item>)
 
 sealed class SearchResponse{
-    data class SUCCESS(val items : MutableList<Item>) : SearchResponse()
+    data class SUCCESS(val total : Int, val items : MutableList<Item>) : SearchResponse()
     data class FAIL(val reason : String) : SearchResponse()
 }
