@@ -19,8 +19,7 @@ interface NaverMovieSearchService{
         private const val BASE_URL = "https://openapi.naver.com/v1/"
 
         fun create(): NaverMovieSearchService{
-            val httpClient = OkHttpClient.Builder()
-            httpClient.addInterceptor({
+            val client = OkHttpClient.Builder().addInterceptor({
                 chain ->
                 val original = chain.request();
                 val request = original.newBuilder()
@@ -29,9 +28,7 @@ interface NaverMovieSearchService{
                         .method(original.method(), original.body())
                         .build();
                 chain.proceed(request);
-                })
-
-            val client = httpClient.build()
+                }).build()
 
             val retrofit = Retrofit.Builder()
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

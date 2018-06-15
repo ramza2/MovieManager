@@ -1,7 +1,9 @@
 package kr.co.ramza.moviemanager.ui.adapter
 
 import android.content.Context
+import android.os.Build
 import android.support.v7.widget.RecyclerView
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,33 +29,46 @@ class SearchMovieListAdapter(val context : Context) : RecyclerView.Adapter<Searc
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        if(!item.image.isNullOrEmpty()){
-            holder.movieImage.run {
-                visibleOrGone = true
-                GlideApp.with(holder.itemView).load(item.image).into(this)
+
+        holder.run {
+            numTextView.text = (position+1).toString() + "."
+            if(!item.image.isNullOrEmpty()){
+                movieImage.run {
+                    visibleOrGone = true
+                    GlideApp.with(holder.itemView).load(item.image).into(this)
+                }
+            }else{
+                movieImage.visibleOrGone = false
             }
-        }else{
-            holder.movieImage.visibleOrGone = false
-        }
-        holder.titleTextView.text = item.title
-        if(!item.subtitle.isNullOrEmpty()){
-            holder.subtitleTextView.run {
-                visibleOrGone = true
-                text = item.subtitle
+
+            titleTextView.text =
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        Html.fromHtml(item.title, Html.FROM_HTML_MODE_COMPACT)
+                    else
+                        Html.fromHtml(item.title)
+            titleTextView.isSelected = true
+            if(!item.subtitle.isNullOrEmpty()){
+                subtitleTextView.run {
+                    isSelected = true
+                    visibleOrGone = true
+                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+                        Html.fromHtml(Html.fromHtml(item.subtitle, Html.FROM_HTML_MODE_LEGACY).toString(),Html.FROM_HTML_MODE_LEGACY)
+                    else
+                        Html.fromHtml(Html.fromHtml(item.subtitle).toString())
+                }
+            }else{
+                subtitleTextView.visibleOrGone = false
             }
-        }else{
-            holder.subtitleTextView.visibleOrGone = false
+            pubDateTextView.text = item.pubDate
         }
-        holder.directorTextView.text = item.director
-        holder.pubDateTextView.text = item.pubDate
 
     }
 
     class ViewHolder(view : View) : RecyclerView.ViewHolder(view){
+        var numTextView = view.numTextView
         val movieImage = view.movieImage
         val titleTextView = view.titleTextView
         val subtitleTextView = view.subtitleTextView
-        val directorTextView = view.directorTextView
         val pubDateTextView = view.pubDateTextView
     }
 }

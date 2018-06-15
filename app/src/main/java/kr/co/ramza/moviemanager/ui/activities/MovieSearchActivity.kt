@@ -2,6 +2,7 @@ package kr.co.ramza.moviemanager.ui.activities
 
 import android.arch.lifecycle.Observer
 import android.os.Bundle
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_movie_search.*
 import kr.co.ramza.moviemanager.R
@@ -30,11 +31,16 @@ class MovieSearchActivity : BaseActivity() {
 
         query = intent.getStringExtra(EXTRA_QUERY)
 
-        searchMovieListAdapter = SearchMovieListAdapter(this)
-
-        searchMovieRecyclerView.layoutManager = LinearLayoutManager(this)
-        searchMovieRecyclerView.adapter = searchMovieListAdapter
-        searchMovieRecyclerView.onScrollToEnd {
+        searchMovieRecyclerView.apply {
+            val layoutManager = LinearLayoutManager(this@MovieSearchActivity)
+            this.layoutManager = layoutManager
+            val dividerItemDecoration = DividerItemDecoration(searchMovieRecyclerView.context,
+                    layoutManager.orientation)
+            addItemDecoration(dividerItemDecoration)
+        }.apply {
+            searchMovieListAdapter = SearchMovieListAdapter(this@MovieSearchActivity)
+            adapter = searchMovieListAdapter
+        }.onScrollToEnd {
             movieSearchViewModel.search()
         }
 
