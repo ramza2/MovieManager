@@ -58,4 +58,6 @@
     <string name="no_data_to_restore">No data to restore.</string>
     <string name="hint_input_series">Enter series name</string>
     <string name="revert">Revert</string>
+    <string name="naver_search">Naver Search</string>
+    <string name="please_input_query">Please enter a keyword.</string>
 </resources>

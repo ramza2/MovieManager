@@ -58,4 +58,6 @@
     <string name="no_data_to_restore">복원할 데이터가 없습니다.</string>
     <string name="hint_input_series">시리즈명 입력</string>
     <string name="revert">원복</string>
+    <string name="naver_search">네이버 검색</string>
+    <string name="please_input_query">검색어를 입력해 주세요.</string>
 </resources>

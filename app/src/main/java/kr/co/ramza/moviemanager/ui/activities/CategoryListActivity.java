@@ -20,7 +20,8 @@ import butterknife.BindView;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
-import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerPresenterActivityComponent;
+import kr.co.ramza.moviemanager.di.component.PresenterActivityComponent;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.presenter.CategoryListPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.CategoryListAdapter;
@@ -57,7 +58,7 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
 
     @Override
     protected ActivityComponent getInitializeComponent() {
-        return DaggerActivityComponent.builder()
+        return DaggerPresenterActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();
     }
@@ -65,7 +66,7 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
     @Override
     protected void onInject(@Nullable ActivityComponent component) {
         if (component != null) {
-            component.inject(this);
+            ((PresenterActivityComponent)component).inject(this);
         }
     }
 

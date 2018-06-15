@@ -21,7 +21,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
-import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerPresenterActivityComponent;
+import kr.co.ramza.moviemanager.di.component.PresenterActivityComponent;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.presenter.MovieRecommendPresenter;
@@ -61,7 +62,7 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
 
     @Override
     protected ActivityComponent getInitializeComponent() {
-        return DaggerActivityComponent.builder()
+        return DaggerPresenterActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();
     }
@@ -69,7 +70,7 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
     @Override
     protected void onInject(@Nullable ActivityComponent component) {
         if (component != null) {
-            component.inject(this);
+            ((PresenterActivityComponent)component).inject(this);
         }
     }
 

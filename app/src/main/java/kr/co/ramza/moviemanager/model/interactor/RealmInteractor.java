@@ -22,11 +22,9 @@ import java.util.List;
 import java.util.Random;
 
 import io.realm.Case;
-import io.realm.DynamicRealm;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmMigration;
-import io.realm.RealmObject;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
 import io.realm.RealmSchema;
@@ -290,7 +288,7 @@ public class RealmInteractor {
 
     public Log getLastLog(long categoryId){
         Realm realm = Realm.getDefaultInstance();
-        RealmResults<Log> logRealmResults = realm.where(Log.class).equalTo("movie.category.id", categoryId).findAllSorted("logDt", Sort.DESCENDING);
+        RealmResults<Log> logRealmResults = realm.where(Log.class).equalTo("movie.category.id", categoryId).sort("logDt", Sort.DESCENDING).findAll();
         if(logRealmResults != null && logRealmResults.size() > 0){
             return logRealmResults.first();
         }
@@ -299,7 +297,7 @@ public class RealmInteractor {
 
     public RealmResults<Log> getAllLogs(){
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Log.class).findAllSorted("logDt", Sort.DESCENDING);
+        return realm.where(Log.class).sort("logDt", Sort.DESCENDING).findAll();
     }
 
     public void deleteLog(Log log){

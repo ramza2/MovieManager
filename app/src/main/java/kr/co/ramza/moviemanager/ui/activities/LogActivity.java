@@ -18,7 +18,8 @@ import butterknife.BindView;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
-import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerPresenterActivityComponent;
+import kr.co.ramza.moviemanager.di.component.PresenterActivityComponent;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.presenter.LogPresenter;
 import kr.co.ramza.moviemanager.ui.adapter.LogListAdapter;
@@ -51,7 +52,7 @@ public class LogActivity extends BaseActivity implements LogView{
 
     @Override
     protected ActivityComponent getInitializeComponent() {
-        return DaggerActivityComponent.builder()
+        return DaggerPresenterActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();
     }
@@ -59,7 +60,7 @@ public class LogActivity extends BaseActivity implements LogView{
     @Override
     protected void onInject(@Nullable ActivityComponent component) {
         if (component != null) {
-            component.inject(this);
+            ((PresenterActivityComponent)component).inject(this);
         }
     }
 

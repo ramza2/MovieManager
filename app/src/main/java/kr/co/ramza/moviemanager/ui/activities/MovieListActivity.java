@@ -21,10 +21,12 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
-import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent;
+import kr.co.ramza.moviemanager.di.component.DaggerPresenterActivityComponent;
+import kr.co.ramza.moviemanager.di.component.PresenterActivityComponent;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.presenter.MovieListPresenter;
@@ -79,7 +81,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
 
     @Override
     protected ActivityComponent getInitializeComponent() {
-        return DaggerActivityComponent.builder()
+        return DaggerPresenterActivityComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .build();
     }
@@ -87,7 +89,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     @Override
     protected void onInject(@Nullable ActivityComponent component) {
         if (component != null) {
-            component.inject(this);
+            ((PresenterActivityComponent)component).inject(this);
         }
     }
 
@@ -206,6 +208,18 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
         movieListAdapter.setMovieRealmResults(movieRealmResults);
         movieListAdapter.notifyDataSetChanged();
         searchCountTextView.setText(String.valueOf(movieRealmResults.size()));
+    }
+
+    @OnClick(R.id.naverSearchButton)
+    public void onNaverSearchClicked(){
+        String query = movieNameEditText.getText().toString();
+        if(!query.isEmpty()){
+            Intent intent = new Intent(this, MovieSearchActivity.class);
+            intent.putExtra(MovieSearchActivity.EXTRA_QUERY, query);
+            startActivity(intent);
+        }else{
+            Toast.makeText(getApplicationContext(), R.string.please_input_query, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

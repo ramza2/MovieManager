@@ -10,11 +10,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="kr.co.ramza.moviemanager.ui.activities.MovieListActivity">
-    <kr.co.ramza.moviemanager.ui.view.ClearEditText
-        android:id="@+id/movieNameEditText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/name_of_video_to_search_or_add"/>
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <kr.co.ramza.moviemanager.ui.view.ClearEditText
+            android:id="@+id/movieNameEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/name_of_video_to_search_or_add"/>
+        <Button
+            android:id="@+id/naverSearchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/naver_search"/>
+    </LinearLayout>
     <kr.co.ramza.moviemanager.ui.view.ClearEditText
         android:id="@+id/seriesEditText"
         android:layout_width="match_parent"
