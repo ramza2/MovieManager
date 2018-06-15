@@ -60,4 +60,8 @@
     <string name="revert">Revert</string>
     <string name="naver_search">Naver Search</string>
     <string name="please_input_query">Please enter a keyword.</string>
+    <string name="pubdate">Production year</string>
+    <string name="user_rating">Rating</string>
+    <string name="director">Director</string>
+    <string name="actor">Actor</string>
 </resources>

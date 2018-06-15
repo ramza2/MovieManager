@@ -60,4 +60,8 @@
     <string name="revert">원복</string>
     <string name="naver_search">네이버 검색</string>
     <string name="please_input_query">검색어를 입력해 주세요.</string>
+    <string name="pubdate">제작년도</string>
+    <string name="user_rating">평점</string>
+    <string name="director">감독</string>
+    <string name="actor">배우</string>
 </resources>

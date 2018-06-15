@@ -34,7 +34,7 @@ class SearchMovieListAdapter(val context : Context, val clickListener: ((Item)->
 
             titleTextView.text =
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        Html.fromHtml(item.title, Html.FROM_HTML_MODE_COMPACT)
+                        Html.fromHtml(item.title, Html.FROM_HTML_MODE_LEGACY )
                     else
                         Html.fromHtml(item.title)
             titleTextView.isSelected = true

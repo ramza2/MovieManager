@@ -2,6 +2,7 @@ package kr.co.ramza.moviemanager.ui.activities
 
 import android.app.Dialog
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
@@ -93,7 +94,9 @@ class MovieSearchActivity : BaseActivity() {
     }
 
     fun onItemClick(item: Item){
-
+        val intent = Intent(this, MovieSearchDetailActivity::class.java)
+        intent.putExtra(MovieSearchDetailActivity.EXTRA_ITEM, item)
+        startActivity(intent)
     }
 
     fun onItemLongClick(item: Item) : Boolean{

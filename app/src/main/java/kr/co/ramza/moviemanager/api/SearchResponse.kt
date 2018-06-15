@@ -1,15 +1,19 @@
 package kr.co.ramza.moviemanager.api
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Item(
     val title : String,
     val link : String,
     val image : String,
     val subtitle : String,
     val pubDate : String,
-    val director : String,
-    val actor : String,
+    val director : String?,
+    val actor : String?,
     val userRating : String
-)
+) : Parcelable
 
 data class Result(val total : Int, val start : Int, val display: Int, val items : MutableList<Item>)
 
