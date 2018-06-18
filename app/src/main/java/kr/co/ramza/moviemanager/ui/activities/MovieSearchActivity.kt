@@ -112,9 +112,13 @@ class MovieSearchActivity : BaseActivity() {
         ).filter {
             it == true
         }.subscribe {
-            val category = view.categorySpinner.getSelectedItem() as Category
-            realmInteractor.addMovie(Movie(category, title, null)).subscribe();
-            toast(R.string.video_added)
+            val category = view.categorySpinner.selectedItem as Category
+            if(category != null){
+                realmInteractor.addMovie(Movie(category, title, null)).subscribe();
+                toast(R.string.video_added)
+            }else{
+                toast(R.string.please_select_category)
+            }
         })
         return true
     }
