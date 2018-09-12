@@ -87,7 +87,7 @@ public class RealmInteractor {
 
     public RealmResults<Category> getAllCategories(){
         Realm realm = Realm.getDefaultInstance();
-        return realm.where(Category.class).findAll();
+        return realm.where(Category.class).findAll().sort("registDt");
     }
 
     public void modifyCategoryName(Category category, String categoryName){
