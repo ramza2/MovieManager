@@ -1,6 +1,6 @@
 package kr.co.ramza.moviemanager.di.component;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import dagger.Component;
 import kr.co.ramza.moviemanager.di.annotation.PerActivity;

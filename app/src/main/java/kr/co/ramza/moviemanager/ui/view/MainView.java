@@ -1,6 +1,6 @@
 package kr.co.ramza.moviemanager.ui.view;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import com.google.firebase.auth.FirebaseUser;
 

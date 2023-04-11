@@ -2,7 +2,7 @@ package kr.co.ramza.moviemanager.ui.adapter
 
 import android.content.Context
 import android.os.Build
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +10,14 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.item_search_movie_list.view.*
 import kr.co.ramza.moviemanager.R
 import kr.co.ramza.moviemanager.api.Item
+import kr.co.ramza.moviemanager.api.ThemoviedbItem
 import kr.co.ramza.moviemanager.util.visibleOrGone
 
-class SearchMovieListAdapter(val context : Context, val clickListener: ((Item)->Unit)?, val longClickListener : ((Item)->Boolean)? ) : RecyclerView.Adapter<SearchMovieListAdapter.ViewHolder>() {
+class SearchMovieListAdapter(val context : Context, val clickListener: ((ThemoviedbItem)->Unit)?, val longClickListener : ((ThemoviedbItem)->Boolean)? ) : RecyclerView.Adapter<SearchMovieListAdapter.ViewHolder>() {
 
-    private val items = mutableListOf<Item>()
+    private val items = mutableListOf<ThemoviedbItem>()
 
-    fun addItems(items:List<Item>){
+    fun addItems(items:List<ThemoviedbItem>){
         val start = this.items.size
         this.items.addAll(items)
         notifyItemRangeInserted(start, items.size)
@@ -32,26 +33,18 @@ class SearchMovieListAdapter(val context : Context, val clickListener: ((Item)->
         holder.run {
             numTextView.text = (position+1).toString() + "."
 
-            titleTextView.text =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        Html.fromHtml(item.title, Html.FROM_HTML_MODE_LEGACY )
-                    else
-                        Html.fromHtml(item.title)
-            titleTextView.isSelected = true
-            if(!item.subtitle.isNullOrEmpty()){
+            titleTextView.text = item.original_title
+            if(!item.overview.isNullOrEmpty()){
                 subtitleTextView.run {
                     isSelected = true
                     visibleOrGone = true
-                    text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        Html.fromHtml(Html.fromHtml(item.subtitle, Html.FROM_HTML_MODE_LEGACY).toString(),Html.FROM_HTML_MODE_LEGACY)
-                    else
-                        Html.fromHtml(Html.fromHtml(item.subtitle).toString())
+                    text = item.overview
                 }
             }else{
                 subtitleTextView.visibleOrGone = false
             }
-            pubDateTextView.text = item.pubDate
-            userRatingTextView.text = item.userRating
+            pubDateTextView.text = item.release_date
+            userRatingTextView.text = item.vote_average.toString()
 
             itemView.setOnClickListener {
                 clickListener?.invoke(item)

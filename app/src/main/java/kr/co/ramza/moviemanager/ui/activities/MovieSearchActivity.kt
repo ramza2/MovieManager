@@ -1,20 +1,18 @@
 package kr.co.ramza.moviemanager.ui.activities
 
 import android.app.Dialog
-import android.arch.lifecycle.Observer
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.WindowManager
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_movie_search.*
 import kotlinx.android.synthetic.main.dialog_category_view.view.*
 import kr.co.ramza.moviemanager.R
-import kr.co.ramza.moviemanager.api.Item
-import kr.co.ramza.moviemanager.api.SearchResponse
+import kr.co.ramza.moviemanager.api.ThemoviedbItem
+import kr.co.ramza.moviemanager.api.ThemoviedbSearchResponse
 import kr.co.ramza.moviemanager.di.component.ActivityComponent
 import kr.co.ramza.moviemanager.di.component.DaggerViewModelActivityComponent
 import kr.co.ramza.moviemanager.di.component.ViewModelActivityComponent
@@ -52,7 +50,7 @@ class MovieSearchActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        query = intent.getStringExtra(EXTRA_QUERY)
+        query = intent.getStringExtra(EXTRA_QUERY).toString()
 
         progressDialog = Dialog(this, R.style.ProgressDialog)
         progressDialog.window!!.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
@@ -60,10 +58,14 @@ class MovieSearchActivity : BaseActivity() {
         progressDialog.setCancelable(false)
 
         searchMovieRecyclerView.apply {
-            val layoutManager = LinearLayoutManager(this@MovieSearchActivity)
+            val layoutManager =
+                LinearLayoutManager(this@MovieSearchActivity)
             this.layoutManager = layoutManager
-            val dividerItemDecoration = DividerItemDecoration(searchMovieRecyclerView.context,
-                    layoutManager.orientation)
+            val dividerItemDecoration =
+                DividerItemDecoration(
+                    searchMovieRecyclerView.context,
+                    layoutManager.orientation
+                )
             addItemDecoration(dividerItemDecoration)
         }.apply {
             searchMovieListAdapter = SearchMovieListAdapter(this@MovieSearchActivity,
@@ -76,11 +78,12 @@ class MovieSearchActivity : BaseActivity() {
 
         movieSearchViewModel.getSearchResult(query).observe(this, Observer {
             when(it){
-                is SearchResponse.SUCCESS -> {
+                is ThemoviedbSearchResponse.SUCCESS -> {
                     searchCountTextView.text = it.total.toString()
                     searchMovieListAdapter.addItems(it.items)
                 }
-                is SearchResponse.FAIL -> toast(it.reason)
+                is ThemoviedbSearchResponse.FAIL -> toast(it.reason)
+                else -> throw AssertionError()
             }
         })
 
@@ -93,19 +96,16 @@ class MovieSearchActivity : BaseActivity() {
         })
     }
 
-    fun onItemClick(item: Item){
+    fun onItemClick(item: ThemoviedbItem){
         val intent = Intent(this, MovieSearchDetailActivity::class.java)
         intent.putExtra(MovieSearchDetailActivity.EXTRA_ITEM, item)
         startActivity(intent)
     }
 
-    fun onItemLongClick(item: Item) : Boolean{
+    fun onItemLongClick(item: ThemoviedbItem) : Boolean{
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_category_view, null)
         view.categorySpinner.adapter = categorySpinnerAdapter
-        val title = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            Html.fromHtml(item.title, Html.FROM_HTML_MODE_COMPACT).toString()
-        else
-            Html.fromHtml(item.title).toString()
+        val title = item.original_title
         subscriptions.add(dialog(this,
                 "동영상 등록", "[ " + title + " ] 영화를 등록 하시겠습니까?",
                 view

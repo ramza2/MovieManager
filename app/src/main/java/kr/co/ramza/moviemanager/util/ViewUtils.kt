@@ -1,7 +1,7 @@
 package kr.co.ramza.moviemanager.util
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.View.*
 
@@ -31,10 +31,10 @@ var View.gone
 
 fun RecyclerView.onScrollToEnd(onScrollNearEnd: (Unit) -> Unit)
         = addOnScrollListener(object : RecyclerView.OnScrollListener() {
-    override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         val linearLayoutManager = recyclerView?.layoutManager as LinearLayoutManager
         if (linearLayoutManager.childCount + linearLayoutManager.findFirstVisibleItemPosition()
-                >= linearLayoutManager.itemCount) {  //if near fifth item from end
+            >= linearLayoutManager.itemCount) {  //if near fifth item from end
             onScrollNearEnd(Unit)
         }
     }

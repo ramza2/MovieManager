@@ -1,6 +1,6 @@
 package kr.co.ramza.moviemanager.di.module;
 
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import dagger.Module;
 import dagger.Provides;

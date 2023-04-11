@@ -1,12 +1,12 @@
 package kr.co.ramza.moviemanager.ui.view
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v7.app.AppCompatActivity
-import kr.co.ramza.moviemanager.api.NaverMovieSearchService
-import kr.co.ramza.moviemanager.api.SearchResponse
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
+import androidx.appcompat.app.AppCompatActivity
+import kr.co.ramza.moviemanager.api.ThemoviedbSearchResponse
+import kr.co.ramza.moviemanager.api.ThemoviedbSearchService
 import kr.co.ramza.moviemanager.model.interactor.MovieSearchInteractor
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -15,10 +15,9 @@ import rx.subscriptions.CompositeSubscription
 
 class MovieSearchViewModel : ViewModel(){
     private var hasNext = true
-    private val display = 100
-    private var nextStart = 1
+    private var page = 1
     private var query = ""
-    private var searchResult = MutableLiveData<SearchResponse>()
+    private var searchResult = MutableLiveData<ThemoviedbSearchResponse>()
     private var isLoading = MutableLiveData<Boolean>()
 
     private val subscriptions = CompositeSubscription()
@@ -27,9 +26,9 @@ class MovieSearchViewModel : ViewModel(){
         isLoading.value = false
     }
 
-    val movieSearchInteractor = MovieSearchInteractor(NaverMovieSearchService.create())
+    val movieSearchInteractor = MovieSearchInteractor(ThemoviedbSearchService.create())
 
-    fun getSearchResult(query : String) : LiveData<SearchResponse>{
+    fun getSearchResult(query : String) : LiveData<ThemoviedbSearchResponse>{
         this.query = query
         search()
         return searchResult
@@ -39,7 +38,7 @@ class MovieSearchViewModel : ViewModel(){
 
     fun search(){
         if(hasNext && !isLoading.value!! && query.length > 0){
-            subscriptions.add(movieSearchInteractor.doSearch(query, display, nextStart)
+            subscriptions.add(movieSearchInteractor.doSearch(query, page)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe {
@@ -49,11 +48,11 @@ class MovieSearchViewModel : ViewModel(){
                         isLoading.value = false
                     }.subscribe({
                         result ->
-                        hasNext = result.total > result.start + result.display
-                        nextStart = result.start + result.display
-                        searchResult.value = SearchResponse.SUCCESS(result.total, result.items)
+                        hasNext = result.total_pages > result.page
+                        page++
+                        searchResult.value = ThemoviedbSearchResponse.SUCCESS(result.total_results, result.results)
                     }){ error ->
-                        searchResult.value = SearchResponse.FAIL(error.message?:"Error")
+                        searchResult.value = ThemoviedbSearchResponse.FAIL(error.message?:"Error")
                         isLoading.value = false
                     }
             )

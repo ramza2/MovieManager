@@ -1,13 +1,11 @@
 package kr.co.ramza.moviemanager.ui.activities
 
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.LayoutInflater
 import kotlinx.android.synthetic.main.activity_movie_search_detail.*
 import kotlinx.android.synthetic.main.dialog_category_view.view.*
 import kr.co.ramza.moviemanager.R
-import kr.co.ramza.moviemanager.api.Item
+import kr.co.ramza.moviemanager.api.ThemoviedbItem
 import kr.co.ramza.moviemanager.di.component.ActivityComponent
 import kr.co.ramza.moviemanager.di.component.DaggerActivityComponent
 import kr.co.ramza.moviemanager.di.module.GlideApp
@@ -22,7 +20,7 @@ import javax.inject.Inject
 
 class MovieSearchDetailActivity : BaseActivity() {
 
-    lateinit var item : Item
+    lateinit var item : ThemoviedbItem
 
     @Inject
     lateinit var categorySpinnerAdapter: CategorySpinnerAdapter
@@ -35,29 +33,16 @@ class MovieSearchDetailActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        item = intent.getParcelableExtra(EXTRA_ITEM)
+        item = intent.getParcelableExtra(EXTRA_ITEM)!!
 
         with(item){
-            titleTextView.text =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                Html.fromHtml(title, Html.FROM_HTML_MODE_LEGACY )
-            else
-                Html.fromHtml(title)
-            subtitleTextView.text =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                        Html.fromHtml(Html.fromHtml(subtitle, Html.FROM_HTML_MODE_LEGACY).toString(),Html.FROM_HTML_MODE_LEGACY)
-                    else
-                        Html.fromHtml(Html.fromHtml(subtitle).toString())
-            pubDateTextView.text = pubDate
-            userRatingTextView.text = userRating
-            var lastIndex : Int = director?.lastIndexOf("|") ?: -1
-            directorTextView.text = (if(lastIndex > 0) director?.substring(0, lastIndex) else director)?.replace("|", ",")
-            lastIndex = actor?.lastIndexOf("|") ?: -1
-            actorTextView.text = (if(lastIndex > 0) actor?.substring(0, lastIndex) else actor)?.replace("|", ",")
-
-            if(!image.isNullOrEmpty()){
+            titleTextView.text = original_title
+            subtitleTextView.text = overview
+            pubDateTextView.text = release_date
+            userRatingTextView.text = vote_average.toString()
+            if(!poster_path.isNullOrEmpty()){
                 GlideApp.with(this@MovieSearchDetailActivity)
-                        .load(image)
+                        .load("https://image.tmdb.org/t/p/original" + poster_path)
                         .into(movieImageView)
             }else{
                 movieImageView.gone = true
@@ -67,10 +52,7 @@ class MovieSearchDetailActivity : BaseActivity() {
         addMovieBtn.setOnClickListener {
             val view = LayoutInflater.from(this).inflate(R.layout.dialog_category_view, null)
             view.categorySpinner.adapter = categorySpinnerAdapter
-            val title = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                Html.fromHtml(item.title, Html.FROM_HTML_MODE_COMPACT).toString()
-            else
-                Html.fromHtml(item.title).toString()
+            val title = item.original_title
             subscriptions.add(dialog(this,
                     "동영상 등록", "[ " + title + " ] 영화를 등록 하시겠습니까?",
                     view

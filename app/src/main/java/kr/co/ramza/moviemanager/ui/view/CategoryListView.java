@@ -1,6 +1,6 @@
 package kr.co.ramza.moviemanager.ui.view;
 
-import android.support.annotation.StringRes;
+import androidx.annotation.StringRes;
 
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.model.Category;
