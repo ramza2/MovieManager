@@ -1,2 +1,0 @@
-alias : ramza
-pass  : 539125
