@@ -36,7 +36,7 @@ class MovieSearchDetailActivity : BaseActivity() {
         item = intent.getParcelableExtra(EXTRA_ITEM)!!
 
         with(item){
-            titleTextView.text = original_title
+            titleTextView.text = title
             subtitleTextView.text = overview
             pubDateTextView.text = release_date
             userRatingTextView.text = vote_average.toString()
@@ -52,7 +52,7 @@ class MovieSearchDetailActivity : BaseActivity() {
         addMovieBtn.setOnClickListener {
             val view = LayoutInflater.from(this).inflate(R.layout.dialog_category_view, null)
             view.categorySpinner.adapter = categorySpinnerAdapter
-            val title = item.original_title
+            val title = item.title
             subscriptions.add(dialog(this,
                     "동영상 등록", "[ " + title + " ] 영화를 등록 하시겠습니까?",
                     view

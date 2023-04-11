@@ -33,7 +33,7 @@ class SearchMovieListAdapter(val context : Context, val clickListener: ((Themovi
         holder.run {
             numTextView.text = (position+1).toString() + "."
 
-            titleTextView.text = item.original_title
+            titleTextView.text = item.title
             if(!item.overview.isNullOrEmpty()){
                 subtitleTextView.run {
                     isSelected = true

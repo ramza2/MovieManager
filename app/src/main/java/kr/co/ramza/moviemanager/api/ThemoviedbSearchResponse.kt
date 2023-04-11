@@ -5,7 +5,7 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ThemoviedbItem(
-    val original_title : String,
+    val title : String,
     val poster_path : String,
     val overview : String,
     val release_date : String,

@@ -105,7 +105,7 @@ class MovieSearchActivity : BaseActivity() {
     fun onItemLongClick(item: ThemoviedbItem) : Boolean{
         val view = LayoutInflater.from(this).inflate(R.layout.dialog_category_view, null)
         view.categorySpinner.adapter = categorySpinnerAdapter
-        val title = item.original_title
+        val title = item.title
         subscriptions.add(dialog(this,
                 "동영상 등록", "[ " + title + " ] 영화를 등록 하시겠습니까?",
                 view
