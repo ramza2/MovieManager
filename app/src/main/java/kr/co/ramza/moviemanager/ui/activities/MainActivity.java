@@ -19,9 +19,8 @@ import java.io.File;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.databinding.ActivityMainBinding;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.DaggerMainActivityComponent;
 import kr.co.ramza.moviemanager.di.component.MainActivityComponent;
@@ -32,25 +31,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public class MainActivity extends BaseActivity implements MainView {
 
-    @BindView(R.id.goolgeSignInBtn)
-    SignInButton signInButton;
-    @BindView(R.id.signOutBtn)
-    Button signOutBtn;
-    @BindView(R.id.disconnectBtn)
-    Button disconnectBtn;
-    @BindView(R.id.statusTextView)
-    TextView statusTextView;
-    @BindView(R.id.sign_out_and_disconnect)
-    LinearLayout sign_out_and_disconnect;
-
-    @BindView(R.id.cloudLayout)
-    LinearLayout cloudLayout;
-    @BindView(R.id.backupBtn)
-    Button backupBtn;
-    @BindView(R.id.restoreBtn)
-    Button restoreBtn;
-    @BindView(R.id.clearDataBtn)
-    Button clearDataBtn;
+    private ActivityMainBinding binding;
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -85,6 +66,9 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         mainPresenter.setView(this);
 
@@ -97,21 +81,30 @@ public class MainActivity extends BaseActivity implements MainView {
         asyncDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         asyncDialog.setCancelable(false);
 
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        binding.goolgeSignInBtn.setSize(SignInButton.SIZE_STANDARD);
 
-        subscriptions.add(RxView.clicks(clearDataBtn)
+        // Set up click listeners
+        binding.recommendBtn.setOnClickListener(v -> startActivity(MovieRecommendActivity.getIntent(this)));
+        binding.categoryListBtn.setOnClickListener(v -> startActivity(CategoryListActivity.getIntent(this)));
+        binding.movieListBtn.setOnClickListener(v -> startActivity(MovieListActivity.getIntent(this)));
+        binding.logListBtn.setOnClickListener(v -> startActivity(LogActivity.getIntent(this)));
+        binding.goolgeSignInBtn.setOnClickListener(v -> mainPresenter.signIn(RC_SIGN_IN));
+        binding.signOutBtn.setOnClickListener(v -> mainPresenter.signOut());
+        binding.disconnectBtn.setOnClickListener(v -> mainPresenter.revokeAccess());
+
+        subscriptions.add(RxView.clicks(binding.clearDataBtn)
                 .flatMap(x->dialog(this, R.string.init, R.string.question_init))
                 .filter(x-> x == true)
                 .subscribe(event->mainPresenter.clearData()));
 
-        subscriptions.add(RxView.clicks(backupBtn)
+        subscriptions.add(RxView.clicks(binding.backupBtn)
                 .flatMap(x->dialog(this, R.string.backup, R.string.question_backup))
                 .filter(x-> x == true)
                 .subscribe(event -> {
                     mainPresenter.backup();
                 }));
 
-        subscriptions.add(RxView.clicks(restoreBtn)
+        subscriptions.add(RxView.clicks(binding.restoreBtn)
                 .flatMap(x->dialog(this, R.string.restore, R.string.question_restore))
                 .filter(x-> x == true)
                 .subscribe(event-> mainPresenter.restore()));
@@ -129,33 +122,6 @@ public class MainActivity extends BaseActivity implements MainView {
         super.onStop();
 
         mainPresenter.onStop();
-    }
-
-    @OnClick({R.id.recommendBtn, R.id.categoryListBtn, R.id.movieListBtn, R.id.logListBtn, R.id.goolgeSignInBtn, R.id.signOutBtn, R.id.disconnectBtn})
-    public void onClick(View view){
-        int id = view.getId();
-        switch (id) {
-            case R.id.recommendBtn:
-                startActivity(MovieRecommendActivity.getIntent(this));
-                break;
-            case R.id.categoryListBtn:
-                startActivity(CategoryListActivity.getIntent(this));
-                break;
-            case R.id.movieListBtn:
-                startActivity(MovieListActivity.getIntent(this));
-                break;
-            case R.id.logListBtn:
-                startActivity(LogActivity.getIntent(this));
-                break;
-            case R.id.goolgeSignInBtn:
-                mainPresenter.signIn(RC_SIGN_IN);
-                break;
-            case R.id.signOutBtn:
-                mainPresenter.signOut();
-                break;
-            case R.id.disconnectBtn:
-                mainPresenter.revokeAccess();
-        }
     }
 
     @Override
@@ -198,6 +164,11 @@ public class MainActivity extends BaseActivity implements MainView {
         Toast.makeText(this, stringRes, Toast.LENGTH_SHORT).show();
     }
 
+    public void showProgressDialog(@StringRes int stringRes) {
+        asyncDialog.setMessage(getString(stringRes));
+        asyncDialog.show();
+    }
+
     @Override
     public void dismissProgressDialog() {
         if(asyncDialog != null && asyncDialog.isShowing()) asyncDialog.dismiss();
@@ -205,27 +176,33 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void updateUI(FirebaseUser user) {
-        dismissAuthProgressDialog();
         if (user != null) {
-            statusTextView.setText(getString(R.string.google_status_fmt, user.getEmail()));
-
-            cloudLayout.setVisibility(View.VISIBLE);
-            signInButton.setVisibility(View.GONE);
-            sign_out_and_disconnect.setVisibility(View.VISIBLE);
+            binding.statusTextView.setText(getString(R.string.signed_in_fmt, user.getDisplayName()));
+            binding.signOutAndDisconnect.setVisibility(View.VISIBLE);
+            binding.goolgeSignInBtn.setVisibility(View.GONE);
+            binding.cloudLayout.setVisibility(View.VISIBLE);
         } else {
-            statusTextView.setText(R.string.signed_out);
-
-            cloudLayout.setVisibility(View.GONE);
-            signInButton.setVisibility(View.VISIBLE);
-            sign_out_and_disconnect.setVisibility(View.GONE);
+            binding.statusTextView.setText(R.string.signed_out);
+            binding.signOutAndDisconnect.setVisibility(View.GONE);
+            binding.goolgeSignInBtn.setVisibility(View.VISIBLE);
+            binding.cloudLayout.setVisibility(View.GONE);
         }
+    }
+
+    public void showError(@StringRes int stringRes) {
+        Toast.makeText(this, stringRes, Toast.LENGTH_LONG).show();
+    }
+
+    public void showError(String error) {
+        Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        mainPresenter.release();
-        subscriptions.unsubscribe();
+        if (subscriptions != null && !subscriptions.isUnsubscribed()) {
+            subscriptions.unsubscribe();
+        }
+        binding = null;
     }
 }

@@ -20,10 +20,9 @@ import com.jakewharton.rxbinding.widget.RxTextView;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.databinding.ActivityMovieListBinding;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.DaggerPresenterActivityComponent;
 import kr.co.ramza.moviemanager.di.component.PresenterActivityComponent;
@@ -40,26 +39,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public class MovieListActivity extends BaseActivity implements MovieListView{
 
-    @BindView(R.id.addMovieBtn)
-    Button addMovieBtn;
-
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.categorySpinner)
-    Spinner categorySpinner;
-
-    @BindView(R.id.haveSeenSpinner)
-    Spinner haveSeenSpinner;
-
-    @BindView(R.id.movieNameEditText)
-    ClearEditText movieNameEditText;
-
-    @BindView(R.id.seriesEditText)
-    ClearEditText seriesEditText;
-
-    @BindView(R.id.searchCountTextView)
-    TextView searchCountTextView;
+    private ActivityMovieListBinding binding;
 
     @Inject
     MovieListPresenter movieListPresenter;
@@ -96,41 +76,45 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        binding = ActivityMovieListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        
         movieListPresenter.setView(this);
 
-        recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setLayoutManager(layoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(binding.recyclerView.getContext(),
                 layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        binding.recyclerView.addItemDecoration(dividerItemDecoration);
 
-        recyclerView.setAdapter(movieListAdapter);
+        binding.recyclerView.setAdapter(movieListAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(movieListAdapter);
         itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView);
 
         categorySpinnerAdapter.addTotalData(getString(R.string.all));
-        categorySpinner.setAdapter(categorySpinnerAdapter);
-        subscriptions.add(RxAdapterView.selectionEvents(categorySpinner)
+        binding.categorySpinner.setAdapter(categorySpinnerAdapter);
+        subscriptions.add(RxAdapterView.selectionEvents(binding.categorySpinner)
                 .subscribe(event->movieListPresenter.loadMovieList()));
 
-        subscriptions.add(RxTextView.textChangeEvents(movieNameEditText)
+        subscriptions.add(RxTextView.textChangeEvents(binding.movieNameEditText)
                 .subscribe(event->movieListPresenter.loadMovieList()));
 
-        subscriptions.add(RxTextView.textChangeEvents(seriesEditText)
+        subscriptions.add(RxTextView.textChangeEvents(binding.seriesEditText)
                 .subscribe(event->movieListPresenter.loadMovieList()));
 
         String[] hasSeen = {getString(R.string.all), getString(R.string.not_have_seen), getString(R.string.have_seen)};
-        haveSeenSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, hasSeen));
-        subscriptions.add(RxAdapterView.selectionEvents(haveSeenSpinner)
+        binding.haveSeenSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, hasSeen));
+        subscriptions.add(RxAdapterView.selectionEvents(binding.haveSeenSpinner)
                 .subscribe(event->movieListPresenter.loadMovieList()));
 
         Observable<Category> categoryObservable =
-                Observable.create((Observable.OnSubscribe<Category>) subscriber -> subscriber.onNext((Category) categorySpinner.getSelectedItem()))
+                Observable.create((Observable.OnSubscribe<Category>) subscriber -> subscriber.onNext((Category) binding.categorySpinner.getSelectedItem()))
                         .filter(category -> {if(category == null || category.getId() <= 0){
                             Toast.makeText(MovieListActivity.this, R.string.please_select_category, Toast.LENGTH_SHORT).show();
                             return false;
@@ -139,7 +123,7 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                         });
 
         Observable<String> movieNameObservable =
-                Observable.create((Observable.OnSubscribe<String>) subscriber -> subscriber.onNext(movieNameEditText.getText().toString().trim()))
+                Observable.create((Observable.OnSubscribe<String>) subscriber -> subscriber.onNext(binding.movieNameEditText.getText().toString().trim()))
                         .filter(movieName->{
                             if(movieName.equals("")){
                                 Toast.makeText(MovieListActivity.this, R.string.please_input_video_name, Toast.LENGTH_SHORT).show();
@@ -149,9 +133,9 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
                         });
 
         Observable<String> seriesObservable =
-                Observable.create(subscriber -> subscriber.onNext(seriesEditText.getText().toString().trim()));
+                Observable.create(subscriber -> subscriber.onNext(binding.seriesEditText.getText().toString().trim()));
 
-        subscriptions.add(RxView.clicks(addMovieBtn)
+        subscriptions.add(RxView.clicks(binding.addMovieBtn)
                 .flatMap(event -> Observable.zip(categoryObservable, movieNameObservable, seriesObservable, (category, name, series) -> new Movie(category, name, series)))
                 .subscribe(movie -> {
                     movieListPresenter.addMovie(movie);
@@ -175,23 +159,23 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
 
     @Override
     public String getName() {
-        return movieNameEditText.getText().toString().trim();
+        return binding.movieNameEditText.getText().toString().trim();
     }
 
     @Override
     public String getSeries() {
-        return seriesEditText.getText().toString().trim();
+        return binding.seriesEditText.getText().toString().trim();
     }
 
     @Override
     public long getCategoryId() {
-        return ((Category)categorySpinner.getSelectedItem()).getId();
+        return ((Category)binding.categorySpinner.getSelectedItem()).getId();
     }
 
     @Override
     public Boolean getHaveSeen() {
         Boolean haveSeen = null;
-        int position = haveSeenSpinner.getSelectedItemPosition();
+        int position = binding.haveSeenSpinner.getSelectedItemPosition();
         switch (position) {
             case 1:
                 haveSeen = false;
@@ -207,25 +191,16 @@ public class MovieListActivity extends BaseActivity implements MovieListView{
     public void showList(RealmResults<Movie> movieRealmResults) {
         movieListAdapter.setMovieRealmResults(movieRealmResults);
         movieListAdapter.notifyDataSetChanged();
-        searchCountTextView.setText(String.valueOf(movieRealmResults.size()));
-    }
-
-    @OnClick(R.id.naverSearchButton)
-    public void onNaverSearchClicked(){
-        String query = movieNameEditText.getText().toString();
-        if(!query.isEmpty()){
-            Intent intent = new Intent(this, MovieSearchActivity.class);
-            intent.putExtra(MovieSearchActivity.EXTRA_QUERY, query);
-            startActivity(intent);
-        }else{
-            Toast.makeText(getApplicationContext(), R.string.please_input_query, Toast.LENGTH_SHORT).show();
-        }
+        binding.searchCountTextView.setText(String.valueOf(movieRealmResults.size()));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        subscriptions.unsubscribe();
+        if (subscriptions != null && !subscriptions.isUnsubscribed()) {
+            subscriptions.unsubscribe();
+        }
+        binding = null;
     }
 }

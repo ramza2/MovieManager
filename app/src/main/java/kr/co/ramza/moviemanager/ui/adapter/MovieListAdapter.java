@@ -9,10 +9,9 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.databinding.ItemMovieListBinding;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Movie;
 import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
@@ -55,13 +54,13 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
             Context context = v.getContext();
             context.startActivity(MovieDetailActivity.getIntent(context, id));
         });
-        holder.numTextView.setText((position + 1) + ".");
-        holder.movieNameTextView.setText(movie.getName());
+        holder.binding.numTextView.setText((position + 1) + ".");
+        holder.binding.movieNameTextView.setText(movie.getName());
         Category category = movie.getCategory();
-        holder.categoryNameTextView.setText(category != null ? category.getName() : null);
-        holder.haveSeenTextView.setText(movie.isHaveSeen() ?
+        holder.binding.categoryNameTextView.setText(category != null ? category.getName() : null);
+        holder.binding.haveSeenTextView.setText(movie.isHaveSeen() ?
                 holder.itemView.getContext().getString(R.string.have_seen) : holder.itemView.getContext().getString(R.string.not_have_seen) );
-        holder.starNumTextView.setText(String.valueOf(movie.getStarNum()));
+        holder.binding.starNumTextView.setText(String.valueOf(movie.getStarNum()));
     }
 
     @Override
@@ -82,20 +81,11 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.View
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        @BindView(R.id.numTextView)
-        TextView numTextView;
-        @BindView(R.id.movieNameTextView)
-        TextView movieNameTextView;
-        @BindView(R.id.haveSeenTextView)
-        TextView haveSeenTextView;
-        @BindView(R.id.starNumTextView)
-        TextView starNumTextView;
-        @BindView(R.id.categoryNameTextView)
-        TextView categoryNameTextView;
+        final ItemMovieListBinding binding;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            binding = ItemMovieListBinding.bind(itemView);
         }
     }
 }

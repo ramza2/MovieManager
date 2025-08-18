@@ -8,11 +8,11 @@ import android.view.WindowManager
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_movie_search.*
-import kotlinx.android.synthetic.main.dialog_category_view.view.*
 import kr.co.ramza.moviemanager.R
 import kr.co.ramza.moviemanager.api.ThemoviedbItem
 import kr.co.ramza.moviemanager.api.ThemoviedbSearchResponse
+import kr.co.ramza.moviemanager.databinding.ActivityMovieSearchBinding
+import kr.co.ramza.moviemanager.databinding.DialogCategoryViewBinding
 import kr.co.ramza.moviemanager.di.component.ActivityComponent
 import kr.co.ramza.moviemanager.di.component.DaggerViewModelActivityComponent
 import kr.co.ramza.moviemanager.di.component.ViewModelActivityComponent
@@ -29,6 +29,8 @@ import rx.subscriptions.CompositeSubscription
 import javax.inject.Inject
 
 class MovieSearchActivity : BaseActivity() {
+
+    private var binding: ActivityMovieSearchBinding? = null
 
     @Inject
     lateinit var movieSearchViewModel : MovieSearchViewModel
@@ -49,6 +51,9 @@ class MovieSearchActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        binding = ActivityMovieSearchBinding.inflate(layoutInflater)
+        setContentView(binding!!.root)
 
         query = intent.getStringExtra(EXTRA_QUERY).toString()
 
@@ -57,13 +62,13 @@ class MovieSearchActivity : BaseActivity() {
         progressDialog.setContentView(R.layout.progressbar)
         progressDialog.setCancelable(false)
 
-        searchMovieRecyclerView.apply {
+        binding!!.searchMovieRecyclerView.apply {
             val layoutManager =
                 LinearLayoutManager(this@MovieSearchActivity)
             this.layoutManager = layoutManager
             val dividerItemDecoration =
                 DividerItemDecoration(
-                    searchMovieRecyclerView.context,
+                    binding!!.searchMovieRecyclerView.context,
                     layoutManager.orientation
                 )
             addItemDecoration(dividerItemDecoration)
@@ -79,7 +84,7 @@ class MovieSearchActivity : BaseActivity() {
         movieSearchViewModel.getSearchResult(query).observe(this, Observer {
             when(it){
                 is ThemoviedbSearchResponse.SUCCESS -> {
-                    searchCountTextView.text = it.total.toString()
+                    binding!!.searchCountTextView.text = it.total.toString()
                     searchMovieListAdapter.addItems(it.items)
                 }
                 is ThemoviedbSearchResponse.FAIL -> toast(it.reason)
@@ -103,16 +108,16 @@ class MovieSearchActivity : BaseActivity() {
     }
 
     fun onItemLongClick(item: ThemoviedbItem) : Boolean{
-        val view = LayoutInflater.from(this).inflate(R.layout.dialog_category_view, null)
-        view.categorySpinner.adapter = categorySpinnerAdapter
+        val dialogBinding = DialogCategoryViewBinding.inflate(LayoutInflater.from(this))
+        dialogBinding.categorySpinner.adapter = categorySpinnerAdapter
         val title = item.title
         subscriptions.add(dialog(this,
                 "동영상 등록", "[ " + title + " ] 영화를 등록 하시겠습니까?",
-                view
+                dialogBinding.root
         ).filter {
             it == true
         }.subscribe {
-            val category = view.categorySpinner.selectedItem as Category
+            val category = dialogBinding.categorySpinner.selectedItem as Category
             if(category != null){
                 realmInteractor.addMovie(Movie(category, title, null)).subscribe();
                 toast(R.string.video_added)
@@ -143,6 +148,9 @@ class MovieSearchActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        subscriptions.unsubscribe()
+        if (subscriptions != null && !subscriptions.isUnsubscribed()) {
+            subscriptions.unsubscribe()
+        }
+        binding = null
     }
 }

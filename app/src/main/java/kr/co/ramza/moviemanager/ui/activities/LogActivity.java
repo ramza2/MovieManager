@@ -14,7 +14,7 @@ import com.jakewharton.rxbinding.view.RxView;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
+import kr.co.ramza.moviemanager.databinding.ActivityLogBinding;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
@@ -35,11 +35,7 @@ public class LogActivity extends BaseActivity implements LogView{
     @Inject
     LogListAdapter logListAdapter;
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.initLogBtn)
-    Button initLogBtn;
+    private ActivityLogBinding binding;
 
     private ItemTouchHelper itemTouchHelper;
 
@@ -67,24 +63,26 @@ public class LogActivity extends BaseActivity implements LogView{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityLogBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         logPresenter.setView(this);
 
-        recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setLayoutManager(layoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(binding.recyclerView.getContext(),
                 layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        binding.recyclerView.addItemDecoration(dividerItemDecoration);
 
-        recyclerView.setAdapter(logListAdapter);
+        binding.recyclerView.setAdapter(logListAdapter);
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(logListAdapter);
         itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView);
 
-        subscriptions.add(RxView.clicks(initLogBtn)
+        subscriptions.add(RxView.clicks(binding.initLogBtn)
                 .subscribe(event->{
                     logPresenter.clearLogs();
                     logListAdapter.notifyDataSetChanged();

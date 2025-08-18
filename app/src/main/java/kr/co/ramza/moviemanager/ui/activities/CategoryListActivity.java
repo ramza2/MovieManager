@@ -16,7 +16,7 @@ import com.jakewharton.rxbinding.view.RxView;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
+import kr.co.ramza.moviemanager.databinding.ActivityCategoryListBinding;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
@@ -32,14 +32,7 @@ import rx.subscriptions.CompositeSubscription;
 
 public class CategoryListActivity extends BaseActivity implements CategoryListView{
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
-
-    @BindView(R.id.categoryNameEditText)
-    ClearEditText categoryNameEditText;
-
-    @BindView(R.id.addCategoryBtn)
-    Button addCategoryBtn;
+    private ActivityCategoryListBinding binding;
 
     @Inject
     CategoryListPresenter categoryListPresenter;
@@ -73,30 +66,32 @@ public class CategoryListActivity extends BaseActivity implements CategoryListVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityCategoryListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         categoryListPresenter.setView(this);
 
-        recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setLayoutManager(layoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(binding.recyclerView.getContext(),
                 layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        binding.recyclerView.addItemDecoration(dividerItemDecoration);
 
-        recyclerView.setAdapter(categoryListAdapter);
+        binding.recyclerView.setAdapter(categoryListAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(categoryListAdapter);
         itemTouchHelper = new ItemTouchHelper(callback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView);
 
-        subscriptions.add(RxView.clicks(addCategoryBtn)
-                .map((v)->categoryNameEditText.getText().toString())
+        subscriptions.add(RxView.clicks(binding.addCategoryBtn)
+                .map((v)->binding.categoryNameEditText.getText().toString())
                 .filter(categoryName->!categoryName.equals(""))
                 .subscribe(categoryName->{
                     categoryListPresenter.addCategory(categoryName);
-                    categoryNameEditText.setText(null);
+                    binding.categoryNameEditText.setText(null);
                 }));
 
         categoryListPresenter.loadCategoryList();

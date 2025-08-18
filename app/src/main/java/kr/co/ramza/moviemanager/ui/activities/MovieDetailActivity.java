@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
+import kr.co.ramza.moviemanager.databinding.ActivityMovieDetailBinding;
 import kr.co.ramza.moviemanager.R;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.DaggerPresenterActivityComponent;
@@ -36,26 +36,7 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     @Inject
     MovieDetailPresenter movieDetailPresenter;
 
-    @BindView(R.id.categorySpinner)
-    Spinner categorySpinner;
-
-    @BindView(R.id.movieNameEditText)
-    ClearEditText movieNameEditText;
-
-    @BindView(R.id.seriesEditText)
-    ClearEditText seriesEditText;
-
-    @BindView(R.id.haveSeenCheckBox)
-    CheckBox haveSeenCheckBox;
-    @BindView(R.id.starNumRatingBar)
-    RatingBar starNumRatingBar;
-
-    @BindView(R.id.modifyBtn)
-    Button modifyBtn;
-    @BindView(R.id.revertBtn)
-    Button revertBtn;
-    @BindView(R.id.deleteBtn)
-    Button deleteBtn;
+    private ActivityMovieDetailBinding binding;
 
     @Inject
     CategorySpinnerAdapter categorySpinnerAdapter;
@@ -84,24 +65,26 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMovieDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         movieDetailPresenter.setView(this);
 
-        categorySpinner.setAdapter(categorySpinnerAdapter);
+        binding.categorySpinner.setAdapter(categorySpinnerAdapter);
 
-        subscriptions.add(RxView.clicks(modifyBtn)
+        subscriptions.add(RxView.clicks(binding.modifyBtn)
                 .subscribe(event->{
-                    movieDetailPresenter.modifyMovie(movieNameEditText.getText().toString().trim(), seriesEditText.getText().toString().trim(),
-                            (Category) categorySpinner.getSelectedItem(), haveSeenCheckBox.isChecked(), starNumRatingBar.getRating());
+                    movieDetailPresenter.modifyMovie(binding.movieNameEditText.getText().toString().trim(), binding.seriesEditText.getText().toString().trim(),
+                            (Category) binding.categorySpinner.getSelectedItem(), binding.haveSeenCheckBox.isChecked(), binding.starNumRatingBar.getRating());
                     finish();
                 }));
 
-        subscriptions.add(RxView.clicks(revertBtn)
+        subscriptions.add(RxView.clicks(binding.revertBtn)
                 .subscribe(event->{
                     movieDetailPresenter.loadOrgMovie();
                 }));
 
-        subscriptions.add(RxView.clicks(deleteBtn)
+        subscriptions.add(RxView.clicks(binding.deleteBtn)
                 .subscribe(event->{
                     movieDetailPresenter.deleteMovie();
                     finish();
@@ -113,21 +96,21 @@ public class MovieDetailActivity extends BaseActivity implements MovieDetailView
 
     @Override
     public void showMovieInfo(Movie movie) {
-        movieNameEditText.setText(movie.getName());
-        seriesEditText.setText(movie.getSeries());
+        binding.movieNameEditText.setText(movie.getName());
+        binding.seriesEditText.setText(movie.getSeries());
 
         Category category = movie.getCategory();
         ArrayList<Category> categories = categorySpinnerAdapter.getCategories();
         for (int i = 0; i < categories.size(); i++) {
             if(category.getId() == categories.get(i).getId()){
-                categorySpinner.setSelection(i);
+                binding.categorySpinner.setSelection(i);
                 break;
             }
         }
 
-        haveSeenCheckBox.setChecked(movie.isHaveSeen());
+        binding.haveSeenCheckBox.setChecked(movie.isHaveSeen());
 
-        starNumRatingBar.setRating(movie.getStarNum());
+        binding.starNumRatingBar.setRating(movie.getStarNum());
     }
 
     public static Intent getIntent(Context context,@IntRange(from = 1) long id){

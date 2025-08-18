@@ -9,10 +9,9 @@ import android.widget.TextView;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.databinding.ItemLogListBinding;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.Log;
 import kr.co.ramza.moviemanager.model.Movie;
@@ -59,13 +58,13 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
                 context.startActivity(MovieDetailActivity.getIntent(context, id));
             }
         });
-        holder.numTextView.setText((position + 1) + ".");
+        holder.binding.numTextView.setText((position + 1) + ".");
         Category category = null;
         if(movie != null){
             category = movie.getCategory();
         }
-        holder.movieNameTextView.setText(movie != null ? movie.getName() : null);
-        holder.categoryNameTextView.setText(category != null ? category.getName() : null);
+        holder.binding.movieNameTextView.setText(movie != null ? movie.getName() : null);
+        holder.binding.categoryNameTextView.setText(category != null ? category.getName() : null);
     }
 
     @Override
@@ -86,16 +85,11 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        @BindView(R.id.numTextView)
-        TextView numTextView;
-        @BindView(R.id.movieNameTextView)
-        TextView movieNameTextView;
-        @BindView(R.id.categoryNameTextView)
-        TextView categoryNameTextView;
+        final ItemLogListBinding binding;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            binding = ItemLogListBinding.bind(itemView);
         }
     }
 }

@@ -6,7 +6,6 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kelvinapps.rxfirebase.RxFirebaseStorage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +35,19 @@ public class FirebaseInteractor {
             StorageReference fileRef = storageRef.child(user.getUid()).child(fileName);
             try {
                 InputStream inputStream = new FileInputStream(file);
-                observable = RxFirebaseStorage.putStream(fileRef, inputStream);
+                observable = Observable.create(subscriber -> {
+                    UploadTask task = fileRef.putStream(inputStream);
+                    task.addOnSuccessListener(taskSnapshot -> {
+                        if (!subscriber.isUnsubscribed()) {
+                            subscriber.onNext(taskSnapshot);
+                            subscriber.onCompleted();
+                        }
+                    }).addOnFailureListener(e -> {
+                        if (!subscriber.isUnsubscribed()) {
+                            subscriber.onError(e);
+                        }
+                    });
+                });
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -49,7 +60,19 @@ public class FirebaseInteractor {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if(user != null){
             StorageReference fileRef = storageRef.child(user.getUid()).child(fileName);
-            observable = RxFirebaseStorage.getFile(fileRef, file);
+            observable = Observable.create(subscriber -> {
+                FileDownloadTask task = fileRef.getFile(file);
+                task.addOnSuccessListener(taskSnapshot -> {
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onNext(taskSnapshot);
+                        subscriber.onCompleted();
+                    }
+                }).addOnFailureListener(e -> {
+                    if (!subscriber.isUnsubscribed()) {
+                        subscriber.onError(e);
+                    }
+                });
+            });
         }
 
         return observable;

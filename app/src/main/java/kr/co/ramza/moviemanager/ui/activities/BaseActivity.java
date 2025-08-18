@@ -7,8 +7,6 @@ import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
-
-import butterknife.ButterKnife;
 import kr.co.ramza.moviemanager.MovieManagerApplication;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.ApplicationComponent;
@@ -31,8 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity implements HasCompo
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentViewResource());
-
-        ButterKnife.bind(this);
 
         this.component = getInitializeComponent();
         if (this.component != null) {

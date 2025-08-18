@@ -11,10 +11,9 @@ import android.widget.EditText;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.realm.RealmResults;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.databinding.ItemCategoryListBinding;
 import kr.co.ramza.moviemanager.model.Category;
 import kr.co.ramza.moviemanager.model.interactor.RealmInteractor;
 import kr.co.ramza.moviemanager.ui.helper.ItemTouchHelperAdapter;
@@ -51,7 +50,7 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
     public void onBindViewHolder(final ViewHolder holder, int position) {
         Category category = categoryRealmResults.get(position);
         holder.categoryNameTextWatcher.setCategory(category);
-        holder.categoryNameEditText.setText(category.getName());
+        holder.binding.categoryNameEditText.setText(category.getName());
     }
 
     @Override
@@ -95,16 +94,15 @@ public class CategoryListAdapter extends RecyclerView.Adapter<CategoryListAdapte
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements
             ItemTouchHelperViewHolder {
-        @BindView(R.id.categoryNameEditText)
-        EditText categoryNameEditText;
+        final ItemCategoryListBinding binding;
 
         CategoryNameTextWatcher categoryNameTextWatcher;
 
         public ViewHolder(View itemView, CategoryNameTextWatcher categoryNameTextWatcher) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            binding = ItemCategoryListBinding.bind(itemView);
             this.categoryNameTextWatcher = categoryNameTextWatcher;
-            this.categoryNameEditText.addTextChangedListener(categoryNameTextWatcher);
+            this.binding.categoryNameEditText.addTextChangedListener(categoryNameTextWatcher);
         }
 
         @Override

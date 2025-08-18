@@ -18,8 +18,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import kr.co.ramza.moviemanager.R;
+import kr.co.ramza.moviemanager.databinding.ActivityMovieRecommendBinding;
 import kr.co.ramza.moviemanager.di.component.ActivityComponent;
 import kr.co.ramza.moviemanager.di.component.DaggerPresenterActivityComponent;
 import kr.co.ramza.moviemanager.di.component.PresenterActivityComponent;
@@ -36,16 +36,7 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
     @Inject
     MovieRecommendPresenter movieRecommendPresenter;
 
-    @BindView(R.id.categorySpinner)
-    Spinner categorySpinner;
-    @BindView(R.id.haveSeenCheckBox)
-    CheckBox haveSeenCheckBox;
-    @BindView(R.id.searchTypeSpinner)
-    Spinner searchTypeSpinner;
-    @BindView(R.id.recommendBtn)
-    Button recommendBtn;
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    private ActivityMovieRecommendBinding binding;
 
     @Inject
     RecommendMovieListAdapter recommendMovieListAdapter;
@@ -77,28 +68,30 @@ public class MovieRecommendActivity extends BaseActivity implements MovieRecomme
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMovieRecommendBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         movieRecommendPresenter.setView(this);
 
-        recyclerView.setHasFixedSize(true);
+        binding.recyclerView.setHasFixedSize(true);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
+        binding.recyclerView.setLayoutManager(layoutManager);
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(binding.recyclerView.getContext(),
                 layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        binding.recyclerView.addItemDecoration(dividerItemDecoration);
 
-        recyclerView.setAdapter(recommendMovieListAdapter);
+        binding.recyclerView.setAdapter(recommendMovieListAdapter);
 
-        categorySpinner.setAdapter(categorySpinnerAdapter);
+        binding.categorySpinner.setAdapter(categorySpinnerAdapter);
 
         String[] searchType = {getString(R.string.mix),getString(R.string.sequence), getString(R.string.random)};
-        searchTypeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, searchType));
+        binding.searchTypeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, searchType));
 
-        subscriptions.add(RxView.clicks(recommendBtn)
-                .subscribe(event-> movieRecommendPresenter.startRecommend((Category) categorySpinner.getSelectedItem(),
-                        haveSeenCheckBox.isChecked(), searchTypeSpinner.getSelectedItemPosition())));
+        subscriptions.add(RxView.clicks(binding.recommendBtn)
+                .subscribe(event-> movieRecommendPresenter.startRecommend((Category) binding.categorySpinner.getSelectedItem(),
+                        binding.haveSeenCheckBox.isChecked(), binding.searchTypeSpinner.getSelectedItemPosition())));
     }
 
     @Override
